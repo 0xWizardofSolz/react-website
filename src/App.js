@@ -62,13 +62,13 @@ const HeroSection = () => (
       Webentwicklung • IT-Beratung • Automatisierung
     </h1>
     <p className="text-lg md:text-xl text-slate-300 max-w-3xl mx-auto mb-8">
-      I build high-performance websites, provide expert IT consulting, and create powerful automations to streamline your business.
+      Ich entwickle leistungsstarke Websites, biete fachkundige IT-Beratung und erstelle wirkungsvolle Automatisierungen, um Ihre Geschäftsprozesse zu optimieren.
     </p>
     <a
       href="#portfolio"
       className="bg-green-500 hover:bg-green-600 text-slate-900 font-bold py-3 px-8 rounded-full text-lg transition-transform transform hover:scale-105 duration-300 inline-block shadow-lg shadow-green-500/20"
     >
-      View My Work
+      Meine Arbeiten
     </a>
   </section>
 );
@@ -86,10 +86,10 @@ const AboutSection = () => (
         <div className="md:w-2/3">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">About Me</h2>
             <p className="text-slate-300 mb-4">
-                As a passionate IT consultant and web developer based in Germany, I specialize in creating bespoke digital solutions that drive growth and efficiency. With a strong focus on modern web technologies, Shopify development, and business process automation, I help businesses thrive in the digital landscape.
+                Als IT-Berater und Webentwickler mit Schwerpunkt auf Shopify-Entwicklung und Automatisierung, helfe ich Unternehmen, sich in der digitalen Landschaft zu behaupten.
             </p>
             <p className="text-slate-300">
-                My approach is collaborative and client-focused. I take the time to understand your unique challenges and goals to deliver solutions that are not only technically sound but also perfectly aligned with your business strategy. Let's build something great together.
+                Mein Ansatz ist kollaborativ und klientorientiert. Ich nehme die Zeit, um Ihre individuellen Herausforderungen und Ziele zu verstehen, um Lösungen zu entwickeln, die nicht nur technisch fundiert, sondern auch perfekt mit Ihrer Geschäftstrategie übereinstimmen. Lassen Sie uns zusammen etwas Großartiges entwickeln.
             </p>
         </div>
     </section>
@@ -124,21 +124,21 @@ const ServicesSection = () => {
 const PortfolioSection = () => {
     const projects = [
         {
-            title: "E-Commerce Platform",
-            description: "A full-featured Shopify store for a fashion brand, including theme customization and app integrations.",
+            title: "Kistenblende Onlineshop",
+            description: "Entwicklung eines Shopify-Stores mit Fokus auf klares Design, Produkt-Individualisierung und eine optimale User Experience.",
             imgSrc: "/images/Kistenblende.png", // <-- Updated Path
             tags: ["Shopify", "Webentwicklung"]
         },
         {
-            title: "Corporate Website",
-            description: "A sleek, professional website for a B2B service provider, built with React and Tailwind CSS.",
+            title: "Digitale Präsenz für ein Kreativstudio",
+            description: "Entwicklung der Website für ein multidisziplinäres Kreativstudio, um die Kernbereiche Sound, Visuals, Web3 und Marketing überzeugend darzustellen.",
             imgSrc: "/images/Studio31.png", // <-- Updated Path
             tags: ["React", "Webentwicklung"]
         },
         {
-            title: "Automation Workflow",
-            description: "A custom workflow to automate client onboarding, saving the company 10+ hours per week.",
-            imgSrc: "/images/project-automation.jpg", // <-- Updated Path
+            title: "Smart Automation für personalisierte Produkte",
+            description: "Für Kistenblende habe ich eine automatisierte Lösung integriert, die personalisierte Vorschaubilder direkt aus dem Customizer generiert, in Mails und Bestellungen einbindet und die Produktionsdaten im Backend bereitstellt.",
+            imgSrc: "/images/Automation.png", // <-- Updated Path
             tags: ["Automatisierung", "API"]
         }
     ];
