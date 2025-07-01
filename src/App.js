@@ -84,7 +84,7 @@ const AboutSection = () => (
              <p className="text-green-400 font-mono">IT-Consultant</p>
         </div>
         <div className="md:w-2/3">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">About Me</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Über mich</h2>
             <p className="text-slate-300 mb-4">
                 Als IT-Berater und Webentwickler mit Schwerpunkt auf Shopify-Entwicklung und Automatisierung, helfe ich Unternehmen, sich in der digitalen Landschaft zu behaupten.
             </p>
@@ -106,7 +106,7 @@ const ServicesSection = () => {
 
     return (
         <section id="services" className="py-20">
-            <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-12">What I Offer</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-12">Was ich biete</h2>
             <div className="grid md:grid-cols-3 gap-8">
                 {services.map((service, index) => (
                     <div key={index} className="bg-slate-800/50 backdrop-blur-sm border border-green-900/30 p-8 rounded-lg shadow-lg hover:shadow-green-500/10 hover:-translate-y-2 transition-all duration-300 flex flex-col items-center text-center">
@@ -145,7 +145,7 @@ const PortfolioSection = () => {
 
     return (
         <section id="portfolio" className="py-20">
-            <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-12">Recent Work</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-12">Meine Arbeiten</h2>
             <div className="grid md:grid-cols-3 gap-8">
                 {projects.map(p => (
                     <div key={p.title} className="bg-slate-800/50 backdrop-blur-sm border border-green-900/30 rounded-lg overflow-hidden group">
@@ -173,7 +173,7 @@ const TestimonialsSection = () => {
 
     return (
         <section id="testimonials" className="py-20">
-            <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-12">What Clients Say</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-12">Was meine Kunden sagen</h2>
             <div className="max-w-3xl mx-auto grid md:grid-cols-2 gap-8">
                 {testimonials.map(t => (
                      <div key={t.name} className="bg-slate-800/50 backdrop-blur-sm border border-green-900/30 p-6 rounded-lg">
@@ -190,7 +190,7 @@ const TestimonialsSection = () => {
 const ContactSection = ({ formData, handleInputChange }) => (
   <section id="contact" className="py-20">
     <div className="max-w-3xl mx-auto">
-      <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-8">Get in Touch</h2>
+      <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-8">Kontakt</h2>
       <div className="bg-slate-800/50 backdrop-blur-sm border border-green-900/30 p-8 rounded-lg shadow-2xl shadow-green-900/10">
         <form name="contact" method="POST" data-netlify="true">
           <input type="hidden" name="form-name" value="contact" />
@@ -210,7 +210,7 @@ const ContactSection = ({ formData, handleInputChange }) => (
           </div>
           <div className="text-center">
             <button type="submit" className="bg-green-500 hover:bg-green-600 text-slate-900 font-bold py-3 px-10 rounded-full text-lg transition-all duration-300 transform hover:scale-105 shadow-lg shadow-green-500/20">
-              Send Message
+              Nachricht senden
             </button>
           </div>
         </form>
@@ -242,19 +242,21 @@ const ImpressumModal = ({ onClose }) => (
       <div className="text-slate-300 space-y-4 font-mono text-sm">
         <p><strong>Ragusa IT-Consulting</strong><br />
         Melvin Ragusa<br />
-        Musterstraße 123 <span className="text-slate-500 italic">(Placeholder)</span><br />
-        12345 Musterstadt <span className="text-slate-500 italic">(Placeholder)</span><br />
-        Germany</p>
+        Provinzialstraße 177 
+        44388 Dortmund
+        Deutschland</p>
         
         <p><strong>Inhaber:</strong><br />
         Melvin Ragusa</p>
 
         <p><strong>Kontakt:</strong><br />
         Telefon: +49 172 7879117<br />
-        E-Mail: info@ragusa-it.dev</p>
+        E-Mail: kontakt@ragusa-it.dev</p>
 
-        <p><strong>Umsatzsteuer-ID (gemäß §27a UStG):</strong><br />
+        {/*
+        <p><strong>Umsatzsteuer-ID (gemäß §27a UStG):</strong><br /> 
         DE123456789 <span className="text-slate-500 italic">(Placeholder)</span></p>
+        */}
 
         <p><strong>Verantwortlich für den Inhalt (gemäß § 55 Abs. 2 RStV):</strong><br />
         Melvin Ragusa<br />
