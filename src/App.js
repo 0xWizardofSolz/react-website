@@ -66,7 +66,7 @@ const AboutSection = () => (
     <section id="about" className="py-20 flex flex-col md:flex-row items-center gap-12">
         <div className="md:w-1/3 text-center md:text-left">
              <div className="w-48 h-48 mx-auto md:mx-0 rounded-full bg-slate-800 border-2 border-green-500 p-2 mb-4">
-                 <img src="/images/profile-picture.jpg" alt="Melvin Ragusa" className="rounded-full w-full h-full object-cover" />
+                 <img src="/images/profile-picture.png" alt="Melvin Ragusa" className="rounded-full w-full h-full object-cover" />
              </div>
              <h3 className="text-2xl font-bold text-white">Melvin Ragusa</h3>
              <p className="text-green-400 font-mono">IT-Consultant</p>
@@ -74,10 +74,10 @@ const AboutSection = () => (
         <div className="md:w-2/3">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Über mich</h2>
             <p className="text-slate-300 mb-4">
-                Als IT-Berater und Webentwickler mit Schwerpunkt auf Shopify-Entwicklung und Automatisierung, helfe ich Unternehmen, sich in der digitalen Landschaft zu behaupten.
+                Als IT-Berater und Webentwickler mit Schwerpunkt auf Shopify- & React-Entwicklung sowie Automatisierung, helfe ich Unternehmen, sich in der digitalen Landschaft zu behaupten.
             </p>
             <p className="text-slate-300">
-                Mein Ansatz ist kollaborativ und klientorientiert. Ich nehme mir die Zeit, Ihre individuellen Herausforderungen und Ziele zu verstehen, um Lösungen zu entwickeln, die nicht nur technisch fundiert, sondern auch perfekt mit Ihrer Geschäftsstrategie übereinstimmen. Lassen Sie uns zusammen etwas Großartiges entwickeln.
+                Mein Ansatz ist kollaborativ und klientorientiert. Ich nehme mir die Zeit, Ihre individuellen Herausforderungen und Ziele zu verstehen, um Lösungen zu entwickeln, die nicht nur technisch fundiert, sondern auch perfekt mit Ihrer Geschäftsstrategie übereinstimmen.
             </p>
         </div>
     </section>
