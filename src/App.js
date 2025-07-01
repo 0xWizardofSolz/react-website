@@ -223,7 +223,7 @@ const ContactSection = () => {
               <p className="text-green-200 mt-2">Ihre Nachricht wurde erfolgreich gesendet. Ich werde mich in Kürze bei Ihnen melden.</p>
             </div>
           ) : (
-            <form name="contact" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" onSubmit={handleSubmit}>
+            <form name="Kontaktformular" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" onSubmit={handleSubmit}>
               <input type="hidden" name="form-name" value="contact" />
               <p className="hidden">
                 <label>
