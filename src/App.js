@@ -78,7 +78,7 @@ const AboutSection = () => (
     <section id="about" className="py-20 flex flex-col md:flex-row items-center gap-12">
         <div className="md:w-1/3 text-center md:text-left">
              <div className="w-48 h-48 mx-auto md:mx-0 rounded-full bg-slate-800 border-2 border-green-500 p-2 mb-4">
-                 <img src="https://placehold.co/192x192/0f172a/4ade80?text=MR" alt="Melvin Ragusa" className="rounded-full w-full h-full object-cover" />
+                 <img src="/images/profile-picture.jpg" alt="Melvin Ragusa" className="rounded-full w-full h-full object-cover" />
              </div>
              <h3 className="text-2xl font-bold text-white">Melvin Ragusa</h3>
              <p className="text-green-400 font-mono">IT-Consultant</p>
@@ -120,25 +120,25 @@ const ServicesSection = () => {
     );
 };
 
-// --- Portfolio Section (New) ---
+// --- Portfolio Section (Updated with local images) ---
 const PortfolioSection = () => {
     const projects = [
         {
             title: "E-Commerce Platform",
             description: "A full-featured Shopify store for a fashion brand, including theme customization and app integrations.",
-            imgSrc: "https://placehold.co/600x400/0f172a/4ade80?text=Project+1",
+            imgSrc: "/images/Kistenblende.png", // <-- Updated Path
             tags: ["Shopify", "Webentwicklung"]
         },
         {
             title: "Corporate Website",
             description: "A sleek, professional website for a B2B service provider, built with React and Tailwind CSS.",
-            imgSrc: "https://placehold.co/600x400/0f172a/4ade80?text=Project+2",
+            imgSrc: "/images/Studio31.png", // <-- Updated Path
             tags: ["React", "Webentwicklung"]
         },
         {
             title: "Automation Workflow",
             description: "A custom workflow to automate client onboarding, saving the company 10+ hours per week.",
-            imgSrc: "https://placehold.co/600x400/0f172a/4ade80?text=Project+3",
+            imgSrc: "/images/project-automation.jpg", // <-- Updated Path
             tags: ["Automatisierung", "API"]
         }
     ];
