@@ -1,25 +1,95 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Briefcase, Zap, Code, X, LoaderCircle } from 'lucide-react';
+
+// --- NEU: Matrix-Hintergrund Komponente ---
+const MatrixBackground = () => {
+  const canvasRef = useRef(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+
+    let animationFrameId;
+
+    const resizeCanvas = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // Zeichen für den "digitalen Regen"
+    const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン';
+    const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const nums = '0123456789';
+    const characters = katakana + latin + nums;
+
+    const fontSize = 16;
+    const columns = Math.floor(canvas.width / fontSize);
+
+    const drops = [];
+    for (let x = 0; x < columns; x++) {
+      drops[x] = 1;
+    }
+
+    const draw = () => {
+      // Semi-transparenter Hintergrund, um den "Trail"-Effekt zu erzeugen
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.05)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = '#4ade80'; // Green-400
+      ctx.font = `${fontSize}px monospace`;
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = characters.charAt(Math.floor(Math.random() * characters.length));
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+        // Tropfen zurück nach oben setzen, wenn er den Bildschirm verlässt
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+
+        drops[i]++;
+      }
+      animationFrameId = window.requestAnimationFrame(draw);
+    };
+
+    draw();
+
+    // Cleanup-Funktion
+    return () => {
+      window.cancelAnimationFrame(animationFrameId);
+      window.removeEventListener('resize', resizeCanvas);
+    };
+  }, []);
+
+  return <canvas ref={canvasRef} className="fixed top-0 left-0 w-full h-full z-0" />;
+};
+
 
 // --- Main App Component ---
 export default function App() {
   const [impressumVisible, setImpressumVisible] = useState(false);
 
   return (
-    <div className="bg-slate-900 text-slate-300 font-sans leading-relaxed tracking-wide bg-grid">
-      <Header />
-      {/* The z-10 ensures the content is rendered above the background pseudo-element */}
-      <main className="relative z-10 container mx-auto px-6 py-12 md:py-20">
-        <HeroSection />
-        <AboutSection />
-        <ServicesSection />
-        <PortfolioSection />
-        <TestimonialsSection />
-        <ContactSection />
-      </main>
-      <Footer onImpressumClick={() => setImpressumVisible(true)} />
+    // Der Haupt-Wrapper hat keinen Hintergrund mehr, da die Canvas das übernimmt
+    <div className="text-slate-300 font-sans leading-relaxed tracking-wide">
+      <MatrixBackground />
+      {/* z-10 sorgt dafür, dass der Inhalt über der Animation liegt */}
+      <div className="relative z-10">
+        <Header />
+        <main className="container mx-auto px-6 py-12 md:py-20">
+          <HeroSection />
+          <AboutSection />
+          <ServicesSection />
+          <PortfolioSection />
+          <TestimonialsSection />
+          <ContactSection />
+        </main>
+        <Footer onImpressumClick={() => setImpressumVisible(true)} />
+      </div>
       {impressumVisible && <ImpressumModal onClose={() => setImpressumVisible(false)} />}
-      <StyleInjector />
     </div>
   );
 }
@@ -109,28 +179,26 @@ const ServicesSection = () => {
 
 // --- Portfolio Section (Updated with links) ---
 const PortfolioSection = () => {
-  // 1. Schritt: Daten um die "link"-Eigenschaft erweitern
   const projects = [
       {
           title: "Kistenblende Onlineshop",
           description: "Entwicklung eines Shopify-Stores mit Fokus auf klares Design, Produkt-Individualisierung und eine optimale User Experience.",
           imgSrc: "/images/Kistenblende.png",
           tags: ["Shopify", "Webentwicklung"],
-          link: "https://www.kistenblende.de/" // <-- Link hinzugefügt
+          link: "https://www.kistenblende.de/" 
       },
       {
           title: "Digitale Präsenz für ein Kreativstudio",
           description: "Entwicklung der Website für ein multidisziplinäres Kreativstudio, um die Kernbereiche Sound, Visuals, Web3 und Marketing überzeugend darzustellen.",
           imgSrc: "/images/Studio31.png",
           tags: ["React", "Webentwicklung"],
-          link: "https://studio31.xyz/" // <-- Link hinzugefügt (Beispiel-URL)
+          link: "https://studio31.xyz/"
       },
       {
           title: "Smart Automation für personalisierte Produkte",
           description: "Für Kistenblende habe ich eine automatisierte Lösung integriert, die personalisierte Vorschaubilder direkt aus dem Customizer generiert, in Mails und Bestellungen einbindet und die Produktionsdaten im Backend bereitstellt.",
           imgSrc: "/images/Automation.png",
           tags: ["Automatisierung", "API"]
-          // <-- Hier bewusst kein Link, da das Bild nicht klickbar sein soll
       }
   ];
 
@@ -141,10 +209,8 @@ const PortfolioSection = () => {
               {projects.map(p => (
                   <div key={p.title} className="bg-slate-800/50 backdrop-blur-sm border border-green-900/30 rounded-lg overflow-hidden group">
                       
-                      {/* 2. Schritt: Bedingtes Rendern des Links */}
-                      <div className="overflow-hidden"> {/* Dieser div verhindert, dass das skalierte Bild über den Rand der Karte hinausgeht */}
+                      <div className="overflow-hidden">
                           {p.link ? (
-                              // Wenn ein Link existiert, wird das Bild in einen <a>-Tag gewickelt
                               <a href={p.link} target="_blank" rel="noopener noreferrer" aria-label={`Link zu ${p.title}`}>
                                   <img 
                                       src={p.imgSrc} 
@@ -153,7 +219,6 @@ const PortfolioSection = () => {
                                   />
                               </a>
                           ) : (
-                              // Ansonsten wird nur das Bild gerendert
                               <img 
                                   src={p.imgSrc} 
                                   alt={p.title} 
@@ -285,7 +350,7 @@ const ContactSection = () => {
 
 // --- Footer Component ---
 const Footer = ({ onImpressumClick }) => (
-  <footer className="bg-slate-900 border-t border-green-900/30 relative z-10">
+  <footer className="bg-slate-900/80 backdrop-blur-sm border-t border-green-900/30 relative z-10">
     <div className="container mx-auto py-6 px-6 text-center text-slate-500">
         <p>&copy; {new Date().getFullYear()} Melvin Ragusa | Ragusa IT-Consulting. Alle Rechte vorbehalten.</p>
         <button onClick={onImpressumClick} className="mt-2 text-sm hover:text-green-400 underline transition-colors duration-300">
@@ -316,12 +381,6 @@ const ImpressumModal = ({ onClose }) => (
         <p><strong>Kontakt:</strong><br />
         Telefon: +49 172 7879117<br />
         E-Mail: kontakt@ragusa-it.dev</p>
-
-        {/*
-        <p><strong>Umsatzsteuer-ID (gemäß §27a UStG):</strong><br /> 
-        DE123456789 <span className="text-slate-500 italic">(Platzhalter)</span></p>
-        */}
-
         <p><strong>Verantwortlich für den Inhalt (gemäß § 55 Abs. 2 RStV):</strong><br />
         Melvin Ragusa<br />
         (Anschrift wie oben)</p>
@@ -329,27 +388,3 @@ const ImpressumModal = ({ onClose }) => (
     </div>
   </div>
 );
-
-// --- Style Injector for Matrix Background ---
-const StyleInjector = () => {
-    const styles = `
-        .bg-grid {
-            background-color: #0f172a; /* slate-900 */
-            background-image:
-                linear-gradient(rgba(74, 222, 128, 0.1) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(74, 222, 128, 0.1) 1px, transparent 1px);
-            background-size: 2.5rem 2.5rem;
-            position: relative;
-        }
-        /* This pseudo-element creates the vignette effect */
-        .bg-grid::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at center, transparent, #0f172a 75%);
-            pointer-events: none;
-            z-index: 2; /* Ensure it's above the grid but below the content */
-        }
-    `;
-    return <style>{styles}</style>;
-}
