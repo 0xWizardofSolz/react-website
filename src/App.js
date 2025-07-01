@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, Briefcase, Zap, Code, User, Star, ExternalLink, X } from 'lucide-react';
+import { Briefcase, Zap, Code, X } from 'lucide-react';
 
 // --- Main App Component ---
 export default function App() {
@@ -40,7 +40,7 @@ export default function App() {
 const Header = () => (
   <header className="bg-gray-900/70 backdrop-blur-sm sticky top-0 z-40 border-b border-green-900/30">
     <div className="container mx-auto flex items-center justify-between p-4 text-white">
-      <a href="#" className="text-2xl font-bold tracking-wider">
+      <a href="#home" className="text-2xl font-bold tracking-wider">
         ragusa-it<span className="text-green-400">.dev</span>
       </a>
       <nav className="hidden md:flex items-center space-x-6">
