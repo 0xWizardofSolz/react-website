@@ -28,9 +28,8 @@ export default function App() {
 const Header = () => (
   <header className="bg-slate-900/70 backdrop-blur-sm sticky top-0 z-40 border-b border-green-900/30">
     <div className="container mx-auto flex items-center justify-between p-4 text-white">
-      {/* Logo anstelle von Text */}
-      <a href="#home" className="flex items-center">
-        <img src="/images/logo.svg" alt="Ragusa IT-Consulting Logo" className="h-8 w-auto" /> {/* Passen Sie Höhe (h-8) nach Bedarf an */}
+      <a href="#home" className="text-2xl font-bold tracking-wider">
+        ragusa-it<span className="text-green-400">.dev</span>
       </a>
       <nav className="hidden md:flex items-center space-x-6">
         <a href="#about" className="hover:text-green-400 transition-colors duration-300">Über mich</a>
