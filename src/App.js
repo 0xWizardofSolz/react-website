@@ -1,19 +1,9 @@
 import React, { useState } from 'react';
-import { Briefcase, Zap, Code, X } from 'lucide-react';
+import { Briefcase, Zap, Code, X, LoaderCircle } from 'lucide-react';
 
 // --- Main App Component ---
 export default function App() {
   const [impressumVisible, setImpressumVisible] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    message: '',
-  });
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
 
   return (
     <div className="bg-slate-900 text-slate-300 font-sans leading-relaxed tracking-wide bg-grid">
@@ -25,10 +15,7 @@ export default function App() {
         <ServicesSection />
         <PortfolioSection />
         <TestimonialsSection />
-        <ContactSection
-          formData={formData}
-          handleInputChange={handleInputChange}
-        />
+        <ContactSection />
       </main>
       <Footer onImpressumClick={() => setImpressumVisible(true)} />
       {impressumVisible && <ImpressumModal onClose={() => setImpressumVisible(false)} />}
@@ -37,12 +24,13 @@ export default function App() {
   );
 }
 
-// --- Header Component ---
+// --- Header Component (Updated with Logo) ---
 const Header = () => (
   <header className="bg-slate-900/70 backdrop-blur-sm sticky top-0 z-40 border-b border-green-900/30">
     <div className="container mx-auto flex items-center justify-between p-4 text-white">
-      <a href="#home" className="text-2xl font-bold tracking-wider">
-        ragusa-it<span className="text-green-400">.dev</span>
+      {/* Logo anstelle von Text */}
+      <a href="#home" className="flex items-center">
+        <img src="/images/logo.svg" alt="Ragusa IT-Consulting Logo" className="h-8 w-auto" /> {/* Passen Sie Höhe (h-8) nach Bedarf an */}
       </a>
       <nav className="hidden md:flex items-center space-x-6">
         <a href="#about" className="hover:text-green-400 transition-colors duration-300">Über mich</a>
@@ -186,38 +174,90 @@ const TestimonialsSection = () => {
     );
 };
 
-// --- Contact Section Component ---
-const ContactSection = ({ formData, handleInputChange }) => (
-  <section id="contact" className="py-20">
-    <div className="max-w-3xl mx-auto">
-      <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-8">Kontakt</h2>
-      <div className="bg-slate-800/50 backdrop-blur-sm border border-green-900/30 p-8 rounded-lg shadow-2xl shadow-green-900/10">
-        <form name="contact" method="POST" data-netlify="true">
-          <input type="hidden" name="form-name" value="contact" />
-          <div className="grid md:grid-cols-2 gap-6 mb-6">
-            <div>
-              <label htmlFor="name" className="block text-slate-400 mb-2 font-mono text-sm">Name</label>
-              <input type="text" id="name" name="name" value={formData.name} onChange={handleInputChange} className="w-full bg-slate-900 border border-slate-700 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500" required />
+// --- Contact Section Component (Corrected for Netlify) ---
+const ContactSection = () => {
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [formStatus, setFormStatus] = useState({ submitting: false, success: false, error: false });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const encode = (data) => {
+    return Object.keys(data)
+      .map((key) => encodeURIComponent(key) + '=' + encodeURIComponent(data[key]))
+      .join('&');
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setFormStatus({ submitting: true, success: false, error: false });
+
+    fetch('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: encode({ 'form-name': 'contact', ...formData }),
+    })
+      .then(() => {
+        setFormStatus({ submitting: false, success: true, error: false });
+        setFormData({ name: '', email: '', message: '' });
+      })
+      .catch((error) => {
+        setFormStatus({ submitting: false, success: false, error: true });
+        alert(error);
+      });
+  };
+
+  return (
+    <section id="contact" className="py-20">
+      <div className="max-w-3xl mx-auto">
+        <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-8">Kontakt</h2>
+        <div className="bg-slate-800/50 backdrop-blur-sm border border-green-900/30 p-8 rounded-lg shadow-2xl shadow-green-900/10">
+          {formStatus.success ? (
+            <div className="text-center p-8 bg-green-900/50 rounded-lg">
+              <h3 className="text-2xl font-bold text-green-300">Vielen Dank!</h3>
+              <p className="text-green-200 mt-2">Ihre Nachricht wurde erfolgreich gesendet. Ich werde mich in Kürze bei Ihnen melden.</p>
             </div>
-            <div>
-              <label htmlFor="email" className="block text-slate-400 mb-2 font-mono text-sm">Email</label>
-              <input type="email" id="email" name="email" value={formData.email} onChange={handleInputChange} className="w-full bg-slate-900 border border-slate-700 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500" required />
-            </div>
-          </div>
-          <div className="mb-6">
-            <label htmlFor="message" className="block text-slate-400 mb-2 font-mono text-sm">Nachricht</label>
-            <textarea id="message" name="message" rows="5" value={formData.message} onChange={handleInputChange} className="w-full bg-slate-900 border border-slate-700 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500" required></textarea>
-          </div>
-          <div className="text-center">
-            <button type="submit" className="bg-green-500 hover:bg-green-600 text-slate-900 font-bold py-3 px-10 rounded-full text-lg transition-all duration-300 transform hover:scale-105 shadow-lg shadow-green-500/20">
-              Nachricht senden
-            </button>
-          </div>
-        </form>
+          ) : (
+            <form name="contact" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" onSubmit={handleSubmit}>
+              <input type="hidden" name="form-name" value="contact" />
+              <p className="hidden">
+                <label>
+                  Don’t fill this out if you’re human: <input name="bot-field" />
+                </label>
+              </p>
+              <div className="grid md:grid-cols-2 gap-6 mb-6">
+                <div>
+                  <label htmlFor="name" className="block text-slate-400 mb-2 font-mono text-sm">Name</label>
+                  <input type="text" id="name" name="name" value={formData.name} onChange={handleInputChange} className="w-full bg-slate-900 border border-slate-700 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-green-500" required />
+                </div>
+                <div>
+                  <label htmlFor="email" className="block text-slate-400 mb-2 font-mono text-sm">Email</label>
+                  <input type="email" id="email" name="email" value={formData.email} onChange={handleInputChange} className="w-full bg-slate-900 border border-slate-700 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-green-500" required />
+                </div>
+              </div>
+              <div className="mb-6">
+                <label htmlFor="message" className="block text-slate-400 mb-2 font-mono text-sm">Nachricht</label>
+                <textarea id="message" name="message" rows="5" value={formData.message} onChange={handleInputChange} className="w-full bg-slate-900 border border-slate-700 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-green-500" required></textarea>
+              </div>
+              <div className="text-center">
+                <button type="submit" disabled={formStatus.submitting} className="bg-green-500 hover:bg-green-600 text-slate-900 font-bold py-3 px-10 rounded-full text-lg transition-all duration-300 transform hover:scale-105 shadow-lg shadow-green-500/20 disabled:bg-slate-600 disabled:cursor-not-allowed flex items-center justify-center gap-2 w-full md:w-auto mx-auto">
+                  {formStatus.submitting && <LoaderCircle className="animate-spin" size={20} />}
+                  {formStatus.submitting ? 'Wird gesendet...' : 'Nachricht senden'}
+                </button>
+              </div>
+              {formStatus.error && <p className="text-red-400 text-center mt-4">Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.</p>}
+            </form>
+          )}
+        </div>
       </div>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 
 // --- Footer Component ---
 const Footer = ({ onImpressumClick }) => (
