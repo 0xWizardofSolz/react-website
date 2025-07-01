@@ -60,7 +60,7 @@ const HeroSection = () => (
   </section>
 );
 
-// --- About Section (New) ---
+// --- Über mich ---
 const AboutSection = () => (
     <section id="about" className="py-20 flex flex-col md:flex-row items-center gap-12">
         <div className="md:w-1/3 text-center md:text-left">
@@ -83,7 +83,7 @@ const AboutSection = () => (
 );
 
 
-// --- Services Section Component ---
+// --- Meine Leistungen ---
 const ServicesSection = () => {
     const services = [
         { icon: <Code size={40} className="text-green-400 mb-4" />, title: "Webentwicklung", description: "Maßgeschneiderte, performante Websites und Applikationen, die auf Ihre Bedürfnisse zugeschnitten sind – von Landingpages bis zu komplexen Systemen." },
@@ -107,48 +107,73 @@ const ServicesSection = () => {
     );
 };
 
-// --- Portfolio Section (Updated with local images) ---
+// --- Portfolio Section (Updated with links) ---
 const PortfolioSection = () => {
-    const projects = [
-        {
-            title: "Kistenblende Onlineshop",
-            description: "Entwicklung eines Shopify-Stores mit Fokus auf klares Design, Produkt-Individualisierung und eine optimale User Experience.",
-            imgSrc: "/images/Kistenblende.png",
-            tags: ["Shopify", "Webentwicklung"]
-        },
-        {
-            title: "Digitale Präsenz für ein Kreativstudio",
-            description: "Entwicklung der Website für ein multidisziplinäres Kreativstudio, um die Kernbereiche Sound, Visuals, Web3 und Marketing überzeugend darzustellen.",
-            imgSrc: "/images/Studio31.png",
-            tags: ["React", "Webentwicklung"]
-        },
-        {
-            title: "Smart Automation für personalisierte Produkte",
-            description: "Für Kistenblende habe ich eine automatisierte Lösung integriert, die personalisierte Vorschaubilder direkt aus dem Customizer generiert, in Mails und Bestellungen einbindet und die Produktionsdaten im Backend bereitstellt.",
-            imgSrc: "/images/Automation.png",
-            tags: ["Automatisierung", "API"]
-        }
-    ];
+  // 1. Schritt: Daten um die "link"-Eigenschaft erweitern
+  const projects = [
+      {
+          title: "Kistenblende Onlineshop",
+          description: "Entwicklung eines Shopify-Stores mit Fokus auf klares Design, Produkt-Individualisierung und eine optimale User Experience.",
+          imgSrc: "/images/Kistenblende.png",
+          tags: ["Shopify", "Webentwicklung"],
+          link: "https://www.kistenblende.de/" // <-- Link hinzugefügt
+      },
+      {
+          title: "Digitale Präsenz für ein Kreativstudio",
+          description: "Entwicklung der Website für ein multidisziplinäres Kreativstudio, um die Kernbereiche Sound, Visuals, Web3 und Marketing überzeugend darzustellen.",
+          imgSrc: "/images/Studio31.png",
+          tags: ["React", "Webentwicklung"],
+          link: "https://studio31.xyz/" // <-- Link hinzugefügt (Beispiel-URL)
+      },
+      {
+          title: "Smart Automation für personalisierte Produkte",
+          description: "Für Kistenblende habe ich eine automatisierte Lösung integriert, die personalisierte Vorschaubilder direkt aus dem Customizer generiert, in Mails und Bestellungen einbindet und die Produktionsdaten im Backend bereitstellt.",
+          imgSrc: "/images/Automation.png",
+          tags: ["Automatisierung", "API"]
+          // <-- Hier bewusst kein Link, da das Bild nicht klickbar sein soll
+      }
+  ];
 
-    return (
-        <section id="portfolio" className="py-20">
-            <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-12">Meine Arbeiten</h2>
-            <div className="grid md:grid-cols-3 gap-8">
-                {projects.map(p => (
-                    <div key={p.title} className="bg-slate-800/50 backdrop-blur-sm border border-green-900/30 rounded-lg overflow-hidden group">
-                        <img src={p.imgSrc} alt={p.title} className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300" />
-                        <div className="p-6">
-                            <h3 className="text-xl font-bold text-white mb-2">{p.title}</h3>
-                            <p className="text-slate-400 text-sm mb-4">{p.description}</p>
-                            <div className="flex flex-wrap gap-2">
-                                {p.tags.map(tag => <span key={tag} className="bg-green-900/50 text-green-300 text-xs font-mono px-2 py-1 rounded">{tag}</span>)}
-                            </div>
-                        </div>
-                    </div>
-                ))}
-            </div>
-        </section>
-    );
+  return (
+      <section id="portfolio" className="py-20">
+          <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-12">Meine Arbeiten</h2>
+          <div className="grid md:grid-cols-3 gap-8">
+              {projects.map(p => (
+                  <div key={p.title} className="bg-slate-800/50 backdrop-blur-sm border border-green-900/30 rounded-lg overflow-hidden group">
+                      
+                      {/* 2. Schritt: Bedingtes Rendern des Links */}
+                      <div className="overflow-hidden"> {/* Dieser div verhindert, dass das skalierte Bild über den Rand der Karte hinausgeht */}
+                          {p.link ? (
+                              // Wenn ein Link existiert, wird das Bild in einen <a>-Tag gewickelt
+                              <a href={p.link} target="_blank" rel="noopener noreferrer" aria-label={`Link zu ${p.title}`}>
+                                  <img 
+                                      src={p.imgSrc} 
+                                      alt={p.title} 
+                                      className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300 cursor-pointer" 
+                                  />
+                              </a>
+                          ) : (
+                              // Ansonsten wird nur das Bild gerendert
+                              <img 
+                                  src={p.imgSrc} 
+                                  alt={p.title} 
+                                  className="w-full h-48 object-cover" 
+                              />
+                          )}
+                      </div>
+
+                      <div className="p-6">
+                          <h3 className="text-xl font-bold text-white mb-2">{p.title}</h3>
+                          <p className="text-slate-400 text-sm mb-4">{p.description}</p>
+                          <div className="flex flex-wrap gap-2">
+                              {p.tags.map(tag => <span key={tag} className="bg-green-900/50 text-green-300 text-xs font-mono px-2 py-1 rounded">{tag}</span>)}
+                          </div>
+                      </div>
+                  </div>
+              ))}
+          </div>
+      </section>
+  );
 };
 
 // --- Testimonials Section (New) ---
