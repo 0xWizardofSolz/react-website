@@ -1,70 +1,119 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Briefcase, Zap, Code, X, LoaderCircle } from 'lucide-react';
 
-// --- NEU: Matrix-Hintergrund Komponente ---
-const MatrixBackground = () => {
-  const canvasRef = useRef(null);
+// --- Partikel-Hintergrund Komponente (Korrigiert) ---
+const ParticleBackground = () => {
+    const canvasRef = useRef(null);
+    
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
+        let animationFrameId;
+        let particlesArray = [];
 
-    let animationFrameId;
+        const resizeCanvas = () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            init(); // Partikel neu initialisieren bei Größenänderung
+        };
 
-    const resizeCanvas = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
+        class Particle {
+            constructor(x, y, directionX, directionY, size, color) {
+                this.x = x;
+                this.y = y;
+                this.directionX = directionX;
+                this.directionY = directionY;
+                this.size = size;
+                this.color = color;
+            }
 
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+            }
 
-    // Zeichen für den "digitalen Regen"
-    const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン';
-    const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const nums = '0123456789';
-    const characters = katakana + latin + nums;
+            update() {
+                if (this.x > canvas.width || this.x < 0) {
+                    this.directionX = -this.directionX;
+                }
+                if (this.y > canvas.height || this.y < 0) {
+                    this.directionY = -this.directionY;
+                }
 
-    const fontSize = 16;
-    const columns = Math.floor(canvas.width / fontSize);
-
-    const drops = [];
-    for (let x = 0; x < columns; x++) {
-      drops[x] = 1;
-    }
-
-    const draw = () => {
-      // Semi-transparenter Hintergrund, um den "Trail"-Effekt zu erzeugen
-      ctx.fillStyle = 'rgba(15, 23, 42, 0.05)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      ctx.fillStyle = '#4ade80'; // Green-400
-      ctx.font = `${fontSize}px monospace`;
-
-      for (let i = 0; i < drops.length; i++) {
-        const text = characters.charAt(Math.floor(Math.random() * characters.length));
-        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-        // Tropfen zurück nach oben setzen, wenn er den Bildschirm verlässt
-        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-          drops[i] = 0;
+                this.x += this.directionX;
+                this.y += this.directionY;
+                this.draw();
+            }
         }
 
-        drops[i]++;
-      }
-      animationFrameId = window.requestAnimationFrame(draw);
-    };
+        const init = () => {
+            particlesArray = [];
+            let numberOfParticles = (canvas.height * canvas.width) / 9000;
+            for (let i = 0; i < numberOfParticles; i++) {
+                let size = (Math.random() * 2) + 1;
+                let x = (Math.random() * ((canvas.width - size * 2) - (size * 2)) + size * 2);
+                let y = (Math.random() * ((canvas.height - size * 2) - (size * 2)) + size * 2);
+                let directionX = (Math.random() * .4) - .2;
+                let directionY = (Math.random() * .4) - .2;
+                let color = '#4ade80'; // tailwind green-400
 
-    draw();
+                particlesArray.push(new Particle(x, y, directionX, directionY, size, color));
+            }
+        };
 
-    // Cleanup-Funktion
-    return () => {
-      window.cancelAnimationFrame(animationFrameId);
-      window.removeEventListener('resize', resizeCanvas);
-    };
-  }, []);
+        const connect = () => {
+            let opacityValue = 1;
+            for (let a = 0; a < particlesArray.length; a++) {
+                for (let b = a; b < particlesArray.length; b++) {
+                    let distance = ((particlesArray[a].x - particlesArray[b].x) * (particlesArray[a].x - particlesArray[b].x)) +
+                        ((particlesArray[a].y - particlesArray[b].y) * (particlesArray[a].y - particlesArray[b].y));
 
-  return <canvas ref={canvasRef} className="fixed top-0 left-0 w-full h-full z-0" />;
+                    if (distance < (canvas.width / 7) * (canvas.height / 7)) {
+                        opacityValue = 1 - (distance / 20000);
+                        ctx.strokeStyle = `rgba(74, 222, 128, ${opacityValue})`; // green-400 with opacity
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
+                        ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        };
+        
+        const animate = () => {
+            animationFrameId = requestAnimationFrame(animate);
+            
+            // KORREKTUR: Hintergrund direkt auf die Canvas zeichnen
+            ctx.fillStyle = '#0f172a'; // Hex-Code für slate-900
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+            }
+            connect();
+        };
+
+        resizeCanvas(); // Einmal initial aufrufen
+        window.addEventListener('resize', resizeCanvas);
+        
+        animate();
+
+        // Cleanup
+        return () => {
+            window.cancelAnimationFrame(animationFrameId);
+            window.removeEventListener('resize', resizeCanvas);
+        };
+
+    }, []);
+
+    // KORREKTUR: bg-slate-900 entfernt, da es jetzt in JS gezeichnet wird
+    return <canvas ref={canvasRef} className="fixed top-0 left-0 w-full h-full z-0" />;
 };
 
 
@@ -74,8 +123,8 @@ export default function App() {
 
   return (
     // Der Haupt-Wrapper hat keinen Hintergrund mehr, da die Canvas das übernimmt
-    <div className="text-slate-300 font-sans leading-relaxed tracking-wide">
-      <MatrixBackground />
+    <div className="text-slate-300 font-sans leading-relaxed tracking-wide bg-slate-900">
+      <ParticleBackground />
       {/* z-10 sorgt dafür, dass der Inhalt über der Animation liegt */}
       <div className="relative z-10">
         <Header />
@@ -135,7 +184,7 @@ const AboutSection = () => (
     <section id="about" className="py-20 flex flex-col md:flex-row items-center gap-12">
         <div className="md:w-1/3 text-center md:text-left">
              <div className="w-48 h-48 mx-auto md:mx-0 rounded-full bg-slate-800 border-2 border-green-500 p-2 mb-4">
-                 <img src="/images/profile-picture.png" alt="Melvin Ragusa" className="rounded-full w-full h-full object-cover" />
+                 <img src="https://placehold.co/192x192/1e293b/4ade80?text=MR" alt="Melvin Ragusa" className="rounded-full w-full h-full object-cover" />
              </div>
              <h3 className="text-2xl font-bold text-white">Melvin Ragusa</h3>
              <p className="text-green-400 font-mono">IT-Consultant</p>
@@ -183,21 +232,21 @@ const PortfolioSection = () => {
       {
           title: "Kistenblende Onlineshop",
           description: "Entwicklung eines Shopify-Stores mit Fokus auf klares Design, Produkt-Individualisierung und eine optimale User Experience.",
-          imgSrc: "/images/Kistenblende.png",
+          imgSrc: "https://placehold.co/600x400/1e293b/4ade80?text=Kistenblende",
           tags: ["Shopify", "Webentwicklung"],
           link: "https://www.kistenblende.de/" 
       },
       {
           title: "Digitale Präsenz für ein Kreativstudio",
           description: "Entwicklung der Website für ein multidisziplinäres Kreativstudio, um die Kernbereiche Sound, Visuals, Web3 und Marketing überzeugend darzustellen.",
-          imgSrc: "/images/Studio31.png",
+          imgSrc: "https://placehold.co/600x400/1e293b/4ade80?text=Studio31",
           tags: ["React", "Webentwicklung"],
           link: "https://studio31.xyz/"
       },
       {
           title: "Smart Automation für personalisierte Produkte",
           description: "Für Kistenblende habe ich eine automatisierte Lösung integriert, die personalisierte Vorschaubilder direkt aus dem Customizer generiert, in Mails und Bestellungen einbindet und die Produktionsdaten im Backend bereitstellt.",
-          imgSrc: "/images/Automation.png",
+          imgSrc: "https://placehold.co/600x400/1e293b/4ade80?text=Automation",
           tags: ["Automatisierung", "API"]
       }
   ];
@@ -297,7 +346,6 @@ const ContactSection = () => {
       })
       .catch((error) => {
         setFormStatus({ submitting: false, success: false, error: true });
-        alert(error);
       });
   };
 
