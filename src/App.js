@@ -45,10 +45,10 @@ const Header = () => (
         ragusa-it<span className="text-green-400">.dev</span>
       </a>
       <nav className="hidden md:flex items-center space-x-6">
-        <a href="#about" className="hover:text-green-400 transition-colors duration-300">About</a>
-        <a href="#services" className="hover:text-green-400 transition-colors duration-300">Services</a>
+        <a href="#about" className="hover:text-green-400 transition-colors duration-300">Über mich</a>
+        <a href="#services" className="hover:text-green-400 transition-colors duration-300">Leistungen</a>
         <a href="#portfolio" className="hover:text-green-400 transition-colors duration-300">Portfolio</a>
-        <a href="#contact" className="bg-green-500 hover:bg-green-600 text-slate-900 font-bold py-2 px-4 rounded-md text-sm transition-all duration-300">Contact</a>
+        <a href="#contact" className="bg-green-500 hover:bg-green-600 text-slate-900 font-bold py-2 px-4 rounded-md text-sm transition-all duration-300">Kontakt</a>
       </nav>
     </div>
   </header>
@@ -89,7 +89,7 @@ const AboutSection = () => (
                 Als IT-Berater und Webentwickler mit Schwerpunkt auf Shopify-Entwicklung und Automatisierung, helfe ich Unternehmen, sich in der digitalen Landschaft zu behaupten.
             </p>
             <p className="text-slate-300">
-                Mein Ansatz ist kollaborativ und klientorientiert. Ich nehme die Zeit, um Ihre individuellen Herausforderungen und Ziele zu verstehen, um Lösungen zu entwickeln, die nicht nur technisch fundiert, sondern auch perfekt mit Ihrer Geschäftstrategie übereinstimmen. Lassen Sie uns zusammen etwas Großartiges entwickeln.
+                Mein Ansatz ist kollaborativ und klientorientiert. Ich nehme mir die Zeit, Ihre individuellen Herausforderungen und Ziele zu verstehen, um Lösungen zu entwickeln, die nicht nur technisch fundiert, sondern auch perfekt mit Ihrer Geschäftsstrategie übereinstimmen. Lassen Sie uns zusammen etwas Großartiges entwickeln.
             </p>
         </div>
     </section>
@@ -99,14 +99,14 @@ const AboutSection = () => (
 // --- Services Section Component ---
 const ServicesSection = () => {
     const services = [
-        { icon: <Code size={40} className="text-green-400 mb-4" />, title: "Webentwicklung", description: "Custom, high-performance websites and applications tailored to your business needs, from landing pages to complex systems." },
-        { icon: <Briefcase size={40} className="text-green-400 mb-4" />, title: "IT-Beratung", description: "Expert consulting for Shopify store setup, system integrations, and digital strategy to optimize your online presence." },
-        { icon: <Zap size={40} className="text-green-400 mb-4" />, title: "Automatisierung", description: "Powerful automation of workflows and business processes to increase productivity and reduce manual effort." }
+        { icon: <Code size={40} className="text-green-400 mb-4" />, title: "Webentwicklung", description: "Maßgeschneiderte, performante Websites und Applikationen, die auf Ihre Bedürfnisse zugeschnitten sind – von Landingpages bis zu komplexen Systemen." },
+        { icon: <Briefcase size={40} className="text-green-400 mb-4" />, title: "IT-Beratung", description: "Fachkundige Beratung für Shopify-Store-Setups, Systemintegrationen und digitale Strategien zur Optimierung Ihrer Online-Präsenz." },
+        { icon: <Zap size={40} className="text-green-400 mb-4" />, title: "Automatisierung", description: "Leistungsstarke Automatisierung von Workflows und Geschäftsprozessen zur Steigerung der Produktivität und Reduzierung des manuellen Aufwands." }
     ];
 
     return (
         <section id="services" className="py-20">
-            <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-12">Was ich biete</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-12">Meine Leistungen</h2>
             <div className="grid md:grid-cols-3 gap-8">
                 {services.map((service, index) => (
                     <div key={index} className="bg-slate-800/50 backdrop-blur-sm border border-green-900/30 p-8 rounded-lg shadow-lg hover:shadow-green-500/10 hover:-translate-y-2 transition-all duration-300 flex flex-col items-center text-center">
@@ -126,19 +126,19 @@ const PortfolioSection = () => {
         {
             title: "Kistenblende Onlineshop",
             description: "Entwicklung eines Shopify-Stores mit Fokus auf klares Design, Produkt-Individualisierung und eine optimale User Experience.",
-            imgSrc: "/images/Kistenblende.png", // <-- Updated Path
+            imgSrc: "/images/Kistenblende.png",
             tags: ["Shopify", "Webentwicklung"]
         },
         {
             title: "Digitale Präsenz für ein Kreativstudio",
             description: "Entwicklung der Website für ein multidisziplinäres Kreativstudio, um die Kernbereiche Sound, Visuals, Web3 und Marketing überzeugend darzustellen.",
-            imgSrc: "/images/Studio31.png", // <-- Updated Path
+            imgSrc: "/images/Studio31.png",
             tags: ["React", "Webentwicklung"]
         },
         {
             title: "Smart Automation für personalisierte Produkte",
             description: "Für Kistenblende habe ich eine automatisierte Lösung integriert, die personalisierte Vorschaubilder direkt aus dem Customizer generiert, in Mails und Bestellungen einbindet und die Produktionsdaten im Backend bereitstellt.",
-            imgSrc: "/images/Automation.png", // <-- Updated Path
+            imgSrc: "/images/Automation.png",
             tags: ["Automatisierung", "API"]
         }
     ];
@@ -167,8 +167,8 @@ const PortfolioSection = () => {
 // --- Testimonials Section (New) ---
 const TestimonialsSection = () => {
     const testimonials = [
-        { quote: "Melvin transformed our online store. His expertise in Shopify and attention to detail were outstanding.", name: "Jane Doe", company: "Fashion Brand" },
-        { quote: "The automation solution developed for us was a game-changer. Highly recommend for any business looking to improve efficiency.", name: "John Smith", company: "Tech Startup" }
+        { quote: "Melvin hat unseren Online-Shop verwandelt. Seine Expertise in Shopify und seine Liebe zum Detail waren herausragend.", name: "Max Mustermann", company: "Modemarke" },
+        { quote: "Die für uns entwickelte Automatisierungslösung hat alles verändert. Sehr zu empfehlen für jedes Unternehmen, das seine Effizienz steigern möchte.", name: "Erika Mustermann", company: "Tech-Startup" }
     ];
 
     return (
@@ -205,7 +205,7 @@ const ContactSection = ({ formData, handleInputChange }) => (
             </div>
           </div>
           <div className="mb-6">
-            <label htmlFor="message" className="block text-slate-400 mb-2 font-mono text-sm">Message</label>
+            <label htmlFor="message" className="block text-slate-400 mb-2 font-mono text-sm">Nachricht</label>
             <textarea id="message" name="message" rows="5" value={formData.message} onChange={handleInputChange} className="w-full bg-slate-900 border border-slate-700 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500" required></textarea>
           </div>
           <div className="text-center">
@@ -221,11 +221,11 @@ const ContactSection = ({ formData, handleInputChange }) => (
 
 // --- Footer Component ---
 const Footer = ({ onImpressumClick }) => (
-  <footer className="bg-slate-900 border-t border-green-900/30">
+  <footer className="bg-slate-900 border-t border-green-900/30 relative z-10">
     <div className="container mx-auto py-6 px-6 text-center text-slate-500">
-        <p>&copy; {new Date().getFullYear()} Melvin Ragusa | Ragusa IT-Consulting. All Rights Reserved.</p>
+        <p>&copy; {new Date().getFullYear()} Melvin Ragusa | Ragusa IT-Consulting. Alle Rechte vorbehalten.</p>
         <button onClick={onImpressumClick} className="mt-2 text-sm hover:text-green-400 underline transition-colors duration-300">
-            Impressum (Legal Notice)
+            Impressum
         </button>
     </div>
   </footer>
@@ -242,8 +242,8 @@ const ImpressumModal = ({ onClose }) => (
       <div className="text-slate-300 space-y-4 font-mono text-sm">
         <p><strong>Ragusa IT-Consulting</strong><br />
         Melvin Ragusa<br />
-        Provinzialstraße 177 
-        44388 Dortmund
+        Provinzialstraße 177 <br />
+        44388 Dortmund<br />
         Deutschland</p>
         
         <p><strong>Inhaber:</strong><br />
@@ -255,7 +255,7 @@ const ImpressumModal = ({ onClose }) => (
 
         {/*
         <p><strong>Umsatzsteuer-ID (gemäß §27a UStG):</strong><br /> 
-        DE123456789 <span className="text-slate-500 italic">(Placeholder)</span></p>
+        DE123456789 <span className="text-slate-500 italic">(Platzhalter)</span></p>
         */}
 
         <p><strong>Verantwortlich für den Inhalt (gemäß § 55 Abs. 2 RStV):</strong><br />
