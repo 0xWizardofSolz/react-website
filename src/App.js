@@ -179,8 +179,8 @@ const PortfolioSection = () => {
 // --- Testimonials Section (New) ---
 const TestimonialsSection = () => {
     const testimonials = [
-        { quote: "Melvin hat unseren Online-Shop verwandelt. Seine Expertise in Shopify und seine Liebe zum Detail waren herausragend.", name: "Max Mustermann", company: "Modemarke" },
-        { quote: "Die für uns entwickelte Automatisierungslösung hat alles verändert. Sehr zu empfehlen für jedes Unternehmen, das seine Effizienz steigern möchte.", name: "Erika Mustermann", company: "Tech-Startup" }
+        { quote: "PLACEHOLDER", name: "Tarek B.", company: "Studio 31 Media" },
+        { quote: "Melvin hat unsere Vision für einen Shop mit Produkt-Personalisierer dank herausragendem UI/UX und technischer Expertise perfekt umgesetzt.", name: "Gideon G.", company: "Kistenblende" }
     ];
 
     return (
@@ -247,7 +247,7 @@ const ContactSection = () => {
               <p className="text-green-200 mt-2">Ihre Nachricht wurde erfolgreich gesendet. Ich werde mich in Kürze bei Ihnen melden.</p>
             </div>
           ) : (
-            <form name="Kontaktformular" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" onSubmit={handleSubmit}>
+            <form name="contact" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" onSubmit={handleSubmit}>
               <input type="hidden" name="form-name" value="contact" />
               <p className="hidden">
                 <label>
