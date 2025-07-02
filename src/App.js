@@ -1,5 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Briefcase, Zap, Code, X, LoaderCircle } from 'lucide-react';
+import dynamic from 'next/dynamic';
+
+const AnimatedCursor = dynamic(() => import('react-animated-cursor'), {
+  ssr: false,
+});
 
 // --- Partikel-Hintergrund Komponente (Korrigiert) ---
 const ParticleBackground = () => {
@@ -124,6 +129,29 @@ export default function App() {
   return (
     // Der Haupt-Wrapper hat keinen Hintergrund mehr, da die Canvas das übernimmt
     <div className="text-slate-300 font-sans leading-relaxed tracking-wide bg-slate-900">
+      <AnimatedCursor
+        innerSize={8}
+        outerSize={35}
+        innerScale={1}
+        outerScale={1.7}
+        outerAlpha={0}
+        outerStyle={{
+          border: '3px solid #fff'
+          clickables={[
+            'a',
+            'input[type="text"]',
+            'input[type="email"]',
+            'input[type="number"]',
+            'input[type="submit"]',
+            'input[type="image"]',
+            'label[for]',
+            'select',
+            'textarea',
+            'button',
+            '.link'
+          ]}
+        }}
+      />
       <ParticleBackground />
       {/* z-10 sorgt dafür, dass der Inhalt über der Animation liegt */}
       <div className="relative z-10">
