@@ -137,7 +137,8 @@ export default function App() {
         outerAlpha={0}
         outerStyle={{
           border: '3px solid #fff'
-          clickables={[
+        }}
+        clickables={[
             'a',
             'input[type="text"]',
             'input[type="email"]',
@@ -150,7 +151,6 @@ export default function App() {
             'button',
             '.link'
           ]}
-        }}
       />
       <ParticleBackground />
       {/* z-10 sorgt dafür, dass der Inhalt über der Animation liegt */}
