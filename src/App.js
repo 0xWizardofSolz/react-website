@@ -111,6 +111,71 @@ const ParticleBackground = () => {
     return <canvas ref={canvasRef} className="fixed top-0 left-0 w-full h-full z-0" />;
 };
 
+// --- Fancy Cursor Component ---
+const FancyCursor = () => {
+  const cursorRef = useRef(null);
+  const requestRef = useRef();
+  const mouse = useRef({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
+  const pos = useRef({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
+  const [isTouch, setIsTouch] = useState(false);
+  const [hoveringLink, setHoveringLink] = useState(false);
+
+  useEffect(() => {
+    const handleTouch = () => setIsTouch(true);
+    window.addEventListener('touchstart', handleTouch, { once: true });
+    return () => window.removeEventListener('touchstart', handleTouch);
+  }, []);
+
+  useEffect(() => {
+    if (isTouch) return;
+    const handleMouseMove = (e) => {
+      mouse.current.x = e.clientX;
+      mouse.current.y = e.clientY;
+      // Check if hovering a link
+      const el = document.elementFromPoint(e.clientX, e.clientY);
+      setHoveringLink(el && (el.closest('a') !== null));
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, [isTouch]);
+
+  useEffect(() => {
+    if (isTouch) return;
+    const animate = () => {
+      pos.current.x += (mouse.current.x - pos.current.x) * 0.18;
+      pos.current.y += (mouse.current.y - pos.current.y) * 0.18;
+      if (cursorRef.current) {
+        cursorRef.current.style.transform = `translate3d(${pos.current.x - 4}px, ${pos.current.y - 4}px, 0)`;
+      }
+      requestRef.current = requestAnimationFrame(animate);
+    };
+    requestRef.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(requestRef.current);
+  }, [isTouch]);
+
+  if (isTouch) return null;
+  return (
+    <div
+      ref={cursorRef}
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: 8,
+        height: 8,
+        pointerEvents: 'none',
+        zIndex: 100,
+        borderRadius: '50%',
+        background: '#4ade80',
+        boxShadow: hoveringLink
+          ? '0 0 32px 12px rgba(74,222,128,0.7), 0 0 10px 4px rgba(255,255,255,0.5)'
+          : '0 0 15px 6px rgba(74,222,128,0.4), 0 0 5px 2px rgba(255,255,255,0.3)',
+        transition: 'box-shadow 0.18s, background 0.2s',
+        mixBlendMode: 'lighten',
+      }}
+    />
+  );
+};
 
 // --- Main App Component ---
 export default function App() {
@@ -118,6 +183,7 @@ export default function App() {
 
   return (
     <div className="text-slate-300 font-sans leading-relaxed tracking-wide bg-slate-900">
+      <FancyCursor />
       <ParticleBackground />
       <div className="relative z-10">
         <Header />
@@ -140,14 +206,14 @@ export default function App() {
 const Header = () => (
   <header className="bg-slate-900/70 backdrop-blur-sm sticky top-0 z-40 border-b border-green-900/30">
     <div className="container mx-auto flex items-center justify-between p-4 text-white">
-      <a href="#home" className="text-2xl font-bold tracking-wider">
+      <a href="#home" className="text-2xl font-bold tracking-wider cursor-none">
         ragusa-it<span className="text-green-400">.dev</span>
       </a>
       <nav className="hidden md:flex items-center space-x-6">
-        <a href="#about" className="hover:text-green-400 transition-colors duration-300">Über mich</a>
-        <a href="#services" className="hover:text-green-400 transition-colors duration-300">Leistungen</a>
-        <a href="#portfolio" className="hover:text-green-400 transition-colors duration-300">Portfolio</a>
-        <a href="#contact" className="bg-green-500 hover:bg-green-600 text-slate-900 font-bold py-2 px-4 rounded-md text-sm transition-all duration-300">Kontakt</a>
+        <a href="#about" className="hover:text-green-400 transition-colors duration-300 cursor-none">Über mich</a>
+        <a href="#services" className="hover:text-green-400 transition-colors duration-300 cursor-none">Leistungen</a>
+        <a href="#portfolio" className="hover:text-green-400 transition-colors duration-300 cursor-none">Portfolio</a>
+        <a href="#contact" className="bg-green-500 hover:bg-green-600 text-slate-900 font-bold py-2 px-4 rounded-md text-sm transition-all duration-300 cursor-none">Kontakt</a>
       </nav>
     </div>
   </header>
@@ -155,43 +221,51 @@ const Header = () => (
 
 // --- Hero Section Component ---
 const HeroSection = () => (
-  <section id="home" className="text-center py-20 md:py-32">
-     <h2 className="text-xl md:text-2xl text-green-300 font-mono mb-2">Melvin Ragusa | Inhaber & IT-Consultant</h2>
-    <h1 className="text-4xl md:text-7xl font-extrabold text-slate-100 mb-4 leading-tight" style={{textShadow: '0 0 15px rgba(74, 222, 128, 0.4), 0 0 5px rgba(255, 255, 255, 0.3)'}}>
-      Webentwicklung • IT-Beratung • Automatisierung
-    </h1>
-    <p className="text-lg md:text-xl text-slate-300 max-w-3xl mx-auto mb-8">
-      Ich entwickle leistungsstarke Websites, biete fachkundige IT-Beratung und erstelle wirkungsvolle Automatisierungen, um Ihre Geschäftsprozesse zu optimieren.
-    </p>
-    <a
-      href="#portfolio"
-      className="bg-green-500 hover:bg-green-600 text-slate-900 font-bold py-3 px-8 rounded-full text-lg transition-transform transform hover:scale-105 duration-300 inline-block shadow-lg shadow-green-500/20"
-    >
-      Meine Arbeiten
-    </a>
+  <section id="home" className="py-20 md:py-32">
+    <div className="bg-slate-800/50 backdrop-blur-sm border border-green-900/30 rounded-lg shadow-2xl shadow-green-900/10 p-8 max-w-3xl mx-auto">
+      <h2 className="text-xl md:text-2xl text-green-300 font-mono mb-2 text-center">Melvin Ragusa | Inhaber & IT-Consultant</h2>
+      <h1 className="text-4xl md:text-7xl font-extrabold text-slate-100 mb-4 leading-tight text-center" style={{textShadow: '0 0 15px rgba(74, 222, 128, 0.4), 0 0 5px rgba(255, 255, 255, 0.3)'}}>
+        Webentwicklung • IT-Beratung • Automatisierung
+      </h1>
+      <p className="text-lg md:text-xl text-slate-300 max-w-3xl mx-auto mb-8 text-center">
+        Ich entwickle leistungsstarke Websites, biete fachkundige IT-Beratung und erstelle wirkungsvolle Automatisierungen, um Ihre Geschäftsprozesse zu optimieren.
+      </p>
+      <div className="text-center">
+        <a
+          href="#portfolio"
+          className="bg-green-500 hover:bg-green-600 text-slate-900 font-bold py-3 px-8 rounded-full text-lg transition-transform transform hover:scale-105 duration-300 inline-block shadow-lg shadow-green-500/20 cursor-none"
+        >
+          Meine Arbeiten
+        </a>
+      </div>
+    </div>
   </section>
 );
 
 // --- Über mich ---
 const AboutSection = () => (
-    <section id="about" className="py-20 flex flex-col md:flex-row items-center gap-12">
+  <section id="about" className="py-20">
+    <div className="bg-slate-800/50 backdrop-blur-sm border border-green-900/30 rounded-lg shadow-2xl shadow-green-900/10 p-8 max-w-5xl mx-auto">
+      <div className="flex flex-col md:flex-row items-center gap-12">
         <div className="md:w-1/3 text-center md:text-left">
-             <div className="w-48 h-48 mx-auto md:mx-0 rounded-full bg-slate-800 border-2 border-green-500 p-2 mb-4">
-                 <img src="/images/profile-picture.png" alt="Melvin Ragusa" className="rounded-full w-full h-full object-cover" />
-             </div>
-             <h3 className="text-2xl font-bold text-white">Melvin Ragusa</h3>
-             <p className="text-green-400 font-mono">IT-Consultant</p>
+          <div className="w-48 h-48 mx-auto md:mx-0 rounded-full bg-slate-800 border-2 border-green-500 p-2 mb-4">
+            <img src="/images/profile-picture.png" alt="Melvin Ragusa" className="rounded-full w-full h-full object-cover" />
+          </div>
+          <h3 className="text-2xl font-bold text-white">Melvin Ragusa</h3>
+          <p className="text-green-400 font-mono">IT-Consultant</p>
         </div>
         <div className="md:w-2/3">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Über mich</h2>
-            <p className="text-slate-300 mb-4">
-                Als IT-Berater und Webentwickler mit Schwerpunkt auf Shopify- & React-Entwicklung sowie Automatisierung, helfe ich Unternehmen, sich in der digitalen Landschaft zu behaupten.
-            </p>
-            <p className="text-slate-300">
-                Mein Ansatz ist kollaborativ und klientorientiert. Ich nehme mir die Zeit, Ihre individuellen Herausforderungen und Ziele zu verstehen, um Lösungen zu entwickeln, die nicht nur technisch fundiert, sondern auch perfekt mit Ihrer Geschäftsstrategie übereinstimmen.
-            </p>
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Über mich</h2>
+          <p className="text-slate-300 mb-4">
+            Als IT-Berater und Webentwickler mit Schwerpunkt auf Shopify- & React-Entwicklung sowie Automatisierung, helfe ich Unternehmen, sich in der digitalen Landschaft zu behaupten.
+          </p>
+          <p className="text-slate-300">
+            Mein Ansatz ist kollaborativ und klientorientiert. Ich nehme mir die Zeit, Ihre individuellen Herausforderungen und Ziele zu verstehen, um Lösungen zu entwickeln, die nicht nur technisch fundiert, sondern auch perfekt mit Ihrer Geschäftsstrategie übereinstimmen.
+          </p>
         </div>
-    </section>
+      </div>
+    </div>
+  </section>
 );
 
 
@@ -252,11 +326,11 @@ const PortfolioSection = () => {
                   <div key={p.title} className="bg-slate-800/50 backdrop-blur-sm border border-green-900/30 rounded-lg overflow-hidden group">
                       <div className="overflow-hidden">
                           {p.link ? (
-                              <a href={p.link} target="_blank" rel="noopener noreferrer" aria-label={`Link zu ${p.title}`}>
+                              <a href={p.link} target="_blank" rel="noopener noreferrer" aria-label={`Link zu ${p.title}`} className="cursor-none">
                                   <img 
                                       src={p.imgSrc} 
                                       alt={p.title} 
-                                      className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300 cursor-pointer" 
+                                      className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300 cursor-pointer cursor-none" 
                                   />
                               </a>
                           ) : (
@@ -355,7 +429,7 @@ const ContactSection = () => {
               <input type="hidden" name="form-name" value="contact" />
               <p className="hidden">
                 <label>
-                  Don’t fill this out if you’re human: <input name="bot-field" />
+                  Don't fill this out if you're human: <input name="bot-field" />
                 </label>
               </p>
               <div className="grid md:grid-cols-2 gap-6 mb-6">
@@ -373,7 +447,7 @@ const ContactSection = () => {
                 <textarea id="message" name="message" rows="5" value={formData.message} onChange={handleInputChange} className="w-full bg-slate-900 border border-slate-700 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-green-500" required></textarea>
               </div>
               <div className="text-center">
-                <button type="submit" disabled={formStatus.submitting} className="bg-green-500 hover:bg-green-600 text-slate-900 font-bold py-3 px-10 rounded-full text-lg transition-all duration-300 transform hover:scale-105 shadow-lg shadow-green-500/20 disabled:bg-slate-600 disabled:cursor-not-allowed flex items-center justify-center gap-2 w-full md:w-auto mx-auto">
+                <button type="submit" disabled={formStatus.submitting} className="bg-green-500 hover:bg-green-600 text-slate-900 font-bold py-3 px-10 rounded-full text-lg transition-all duration-300 transform hover:scale-105 shadow-lg shadow-green-500/20 disabled:bg-slate-600 disabled:cursor-not-allowed flex items-center justify-center gap-2 w-full md:w-auto mx-auto cursor-none">
                   {formStatus.submitting && <LoaderCircle className="animate-spin" size={20} />}
                   {formStatus.submitting ? 'Wird gesendet...' : 'Nachricht senden'}
                 </button>
@@ -392,7 +466,7 @@ const Footer = ({ onImpressumClick }) => (
   <footer className="bg-slate-900/80 backdrop-blur-sm border-t border-green-900/30 relative z-10">
     <div className="container mx-auto py-6 px-6 text-center text-slate-500">
         <p>&copy; {new Date().getFullYear()} Melvin Ragusa | Ragusa IT-Consulting. Alle Rechte vorbehalten.</p>
-        <button onClick={onImpressumClick} className="mt-2 text-sm hover:text-green-400 underline transition-colors duration-300">
+        <button onClick={onImpressumClick} className="mt-2 text-sm hover:text-green-400 underline transition-colors duration-300 cursor-none">
             Impressum
         </button>
     </div>
@@ -403,7 +477,7 @@ const Footer = ({ onImpressumClick }) => (
 const ImpressumModal = ({ onClose }) => (
   <div className="fixed inset-0 bg-black bg-opacity-80 backdrop-blur-sm z-50 flex justify-center items-center p-4">
     <div className="bg-slate-800 rounded-lg shadow-2xl max-w-2xl w-full max-h-full overflow-y-auto p-8 relative border border-green-700">
-      <button onClick={onClose} className="absolute top-4 right-4 text-slate-500 hover:text-white transition-colors">
+      <button onClick={onClose} className="absolute top-4 right-4 text-slate-500 hover:text-white transition-colors cursor-none">
         <X size={24} />
       </button>
       <h3 className="text-2xl font-bold text-white mb-6">Impressum</h3>
