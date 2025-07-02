@@ -1,12 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Briefcase, Zap, Code, X, LoaderCircle } from 'lucide-react';
-import dynamic from 'next/dynamic';
 
-const AnimatedCursor = dynamic(() => import('react-animated-cursor'), {
-  ssr: false,
-});
-
-// --- Partikel-Hintergrund Komponente (Korrigiert) ---
+// --- Partikel-Hintergrund Komponente ---
+// Diese Komponente ist in sich geschlossen und verwendet nur Standard-Browser-APIs.
 const ParticleBackground = () => {
     const canvasRef = useRef(null);
     
@@ -22,7 +18,7 @@ const ParticleBackground = () => {
         const resizeCanvas = () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            init(); // Partikel neu initialisieren bei Größenänderung
+            init();
         };
 
         class Particle {
@@ -65,7 +61,7 @@ const ParticleBackground = () => {
                 let y = (Math.random() * ((canvas.height - size * 2) - (size * 2)) + size * 2);
                 let directionX = (Math.random() * .4) - .2;
                 let directionY = (Math.random() * .4) - .2;
-                let color = '#4ade80'; // tailwind green-400
+                let color = '#4ade80';
 
                 particlesArray.push(new Particle(x, y, directionX, directionY, size, color));
             }
@@ -80,7 +76,7 @@ const ParticleBackground = () => {
 
                     if (distance < (canvas.width / 7) * (canvas.height / 7)) {
                         opacityValue = 1 - (distance / 20000);
-                        ctx.strokeStyle = `rgba(74, 222, 128, ${opacityValue})`; // green-400 with opacity
+                        ctx.strokeStyle = `rgba(74, 222, 128, ${opacityValue})`;
                         ctx.lineWidth = 1;
                         ctx.beginPath();
                         ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
@@ -93,9 +89,7 @@ const ParticleBackground = () => {
         
         const animate = () => {
             animationFrameId = requestAnimationFrame(animate);
-            
-            // KORREKTUR: Hintergrund direkt auf die Canvas zeichnen
-            ctx.fillStyle = '#0f172a'; // Hex-Code für slate-900
+            ctx.fillStyle = '#0f172a';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             for (let i = 0; i < particlesArray.length; i++) {
@@ -104,20 +98,16 @@ const ParticleBackground = () => {
             connect();
         };
 
-        resizeCanvas(); // Einmal initial aufrufen
+        resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
-        
         animate();
 
-        // Cleanup
         return () => {
             window.cancelAnimationFrame(animationFrameId);
             window.removeEventListener('resize', resizeCanvas);
         };
-
     }, []);
 
-    // KORREKTUR: bg-slate-900 entfernt, da es jetzt in JS gezeichnet wird
     return <canvas ref={canvasRef} className="fixed top-0 left-0 w-full h-full z-0" />;
 };
 
@@ -127,33 +117,8 @@ export default function App() {
   const [impressumVisible, setImpressumVisible] = useState(false);
 
   return (
-    // Der Haupt-Wrapper hat keinen Hintergrund mehr, da die Canvas das übernimmt
     <div className="text-slate-300 font-sans leading-relaxed tracking-wide bg-slate-900">
-      <AnimatedCursor
-        innerSize={8}
-        outerSize={35}
-        innerScale={1}
-        outerScale={1.7}
-        outerAlpha={0}
-        outerStyle={{
-          border: '3px solid #fff'
-        }}
-        clickables={[
-            'a',
-            'input[type="text"]',
-            'input[type="email"]',
-            'input[type="number"]',
-            'input[type="submit"]',
-            'input[type="image"]',
-            'label[for]',
-            'select',
-            'textarea',
-            'button',
-            '.link'
-          ]}
-      />
       <ParticleBackground />
-      {/* z-10 sorgt dafür, dass der Inhalt über der Animation liegt */}
       <div className="relative z-10">
         <Header />
         <main className="container mx-auto px-6 py-12 md:py-20">
@@ -171,7 +136,7 @@ export default function App() {
   );
 }
 
-// --- Header Component (Updated with Logo) ---
+// --- Header Component ---
 const Header = () => (
   <header className="bg-slate-900/70 backdrop-blur-sm sticky top-0 z-40 border-b border-green-900/30">
     <div className="container mx-auto flex items-center justify-between p-4 text-white">
@@ -254,7 +219,7 @@ const ServicesSection = () => {
     );
 };
 
-// --- Portfolio Section (Updated with links) ---
+// --- Portfolio Section ---
 const PortfolioSection = () => {
   const projects = [
       {
@@ -285,7 +250,6 @@ const PortfolioSection = () => {
           <div className="grid md:grid-cols-3 gap-8">
               {projects.map(p => (
                   <div key={p.title} className="bg-slate-800/50 backdrop-blur-sm border border-green-900/30 rounded-lg overflow-hidden group">
-                      
                       <div className="overflow-hidden">
                           {p.link ? (
                               <a href={p.link} target="_blank" rel="noopener noreferrer" aria-label={`Link zu ${p.title}`}>
@@ -303,7 +267,6 @@ const PortfolioSection = () => {
                               />
                           )}
                       </div>
-
                       <div className="p-6">
                           <h3 className="text-xl font-bold text-white mb-2">{p.title}</h3>
                           <p className="text-slate-400 text-sm mb-4">{p.description}</p>
@@ -318,7 +281,7 @@ const PortfolioSection = () => {
   );
 };
 
-// --- Testimonials Section (New) ---
+// --- Testimonials Section ---
 const TestimonialsSection = () => {
     const testimonials = [
         { quote: "Für mein Projektstudio brauchte ich unbedingt eine Website mit einem einfachen, aber reaktiven Design und einem soliden Backend mit Zukunftspotenzial. Absolut empfehlenswert!", name: "Tarek B.", company: "Studio 31 Media" },
@@ -340,7 +303,7 @@ const TestimonialsSection = () => {
     );
 };
 
-// --- Contact Section Component (Corrected for Netlify) ---
+// --- Contact Section Component ---
 const ContactSection = () => {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [formStatus, setFormStatus] = useState({ submitting: false, success: false, error: false });
