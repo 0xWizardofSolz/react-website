@@ -7,6 +7,12 @@ import kistenblendeImg from './images/Kistenblende.png';
 import studio31Img from './images/Studio31.png';
 import automationImg from './images/Automation.png';
 
+// Create separate files for major components
+import { lazy, Suspense } from 'react';
+
+const NetworkBackground = lazy(() => import('./components/NetworkBackground'));
+const ContactSection = lazy(() => import('./components/ContactSection'));
+
 // --- Theme Context ---
 const ThemeContext = createContext();
 
