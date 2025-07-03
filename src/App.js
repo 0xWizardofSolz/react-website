@@ -50,10 +50,10 @@ const NetworkBackground = memo(() => {
 
         const currentColors = colors[theme] || colors.dark;
 
-        // Korrigierte Resize-Funktion, um Verzerrungen zu vermeiden
+        // Resize function to avoid distortion
         const resizeCanvas = () => {
             canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight; // FIX: Höhe an den Viewport anpassen, nicht an die Scroll-Höhe
+            canvas.height = window.innerHeight; // Adjust height to the viewport, not the scroll height
             init();
         };
 
@@ -218,6 +218,9 @@ const FancyCursor = memo(() => {
   return (
     <>
       <style>{`
+        html {
+          scroll-behavior: smooth;
+        }
         body, a, button, input, textarea, label {
           cursor: none;
         }
@@ -360,7 +363,7 @@ const Header = memo(() => (
 
 // --- Hero Section Component ---
 const HeroSection = memo(() => (
-  <section id="home" className="py-20 md:py-32">
+  <section id="home" className="py-12 md:py-24 scroll-mt-20">
     <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200 dark:border-green-900/30 rounded-lg shadow-2xl shadow-slate-300/20 dark:shadow-green-900/10 p-8 max-w-3xl mx-auto">
       <h2 className="text-xl md:text-2xl text-green-600 dark:text-green-300 font-mono mb-2 text-center">Melvin Ragusa | Inhaber & IT-Consultant</h2>
       <h1 className="text-4xl md:text-7xl font-extrabold text-slate-900 dark:text-slate-100 mb-4 leading-tight text-center" style={{textShadow: '0 0 15px rgba(74, 222, 128, 0.4), 0 0 5px rgba(255, 255, 255, 0.3)'}}>
@@ -383,7 +386,7 @@ const HeroSection = memo(() => (
 
 // --- About Section ---
 const AboutSection = memo(() => (
-  <section id="about" className="py-20">
+  <section id="about" className="py-20 scroll-mt-20">
     <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200 dark:border-green-900/30 rounded-lg shadow-2xl shadow-slate-300/20 dark:shadow-green-900/10 p-8 max-w-5xl mx-auto">
       <div className="flex flex-col md:flex-row items-center gap-12">
         <div className="md:w-1/3 text-center md:text-left">
@@ -415,7 +418,7 @@ const servicesData = [
 ];
 
 const ServicesSection = memo(() => (
-    <section id="services" className="py-20">
+    <section id="services" className="py-20 scroll-mt-20">
         <h2 className="text-3xl md:text-4xl font-bold text-center text-slate-900 dark:text-white mb-12">Meine Leistungen</h2>
         <div className="grid md:grid-cols-3 gap-8">
             {servicesData.map((service) => {
@@ -457,7 +460,7 @@ const projectsData = [
 ];
 
 const PortfolioSection = memo(() => (
-    <section id="portfolio" className="py-20">
+    <section id="portfolio" className="py-20 scroll-mt-20">
         <h2 className="text-3xl md:text-4xl font-bold text-center text-slate-900 dark:text-white mb-12">Meine Arbeiten</h2>
         <div className="grid md:grid-cols-3 gap-8">
             {projectsData.map(p => (
@@ -492,7 +495,7 @@ const testimonialsData = [
 ];
 
 const TestimonialsSection = memo(() => (
-    <section id="testimonials" className="py-20">
+    <section id="testimonials" className="py-20 scroll-mt-20">
         <h2 className="text-3xl md:text-4xl font-bold text-center text-slate-900 dark:text-white mb-12">Was meine Kunden sagen</h2>
         <div className="max-w-3xl mx-auto grid md:grid-cols-2 gap-8">
             {testimonialsData.map(t => (
@@ -573,7 +576,7 @@ const ContactSection = memo(() => {
   }, [formData]);
 
   return (
-    <section id="contact" className="py-20">
+    <section id="contact" className="py-20 scroll-mt-20">
       <div className="max-w-3xl mx-auto">
         <h2 className="text-3xl md:text-4xl font-bold text-center text-slate-900 dark:text-white mb-8">Kontakt</h2>
         <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200 dark:border-green-900/30 p-8 rounded-lg shadow-2xl shadow-slate-300/20 dark:shadow-green-900/10">
