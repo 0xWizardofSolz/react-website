@@ -178,8 +178,11 @@ const FancyCursor = memo(() => {
       const cursor = cursorRef.current;
       if (!cursor) return;
 
-      cursor.style.left = `${e.clientX}px`;
-      cursor.style.top = `${e.clientY}px`;
+      // Use requestAnimationFrame for smoother cursor updates
+      requestAnimationFrame(() => {
+        cursor.style.left = `${e.clientX}px`;
+        cursor.style.top = `${e.clientY}px`;
+      });
       
       const el = document.elementFromPoint(e.clientX, e.clientY);
       
@@ -216,69 +219,6 @@ const FancyCursor = memo(() => {
   if (isTouch) return null;
 
   return (
-    <>
-      <style>{`
-        html {
-          scroll-behavior: smooth;
-        }
-        body, a, button, input, textarea, label {
-          cursor: none;
-        }
-        #fancy-cursor {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 40px;
-          height: 40px;
-          pointer-events: none;
-          z-index: 100;
-          transform: translate(-20px, -20px);
-        }
-        .fancy-cursor-dot {
-          width: 8px;
-          height: 8px;
-          background-color: #4ade80;
-          border-radius: 50%;
-          box-shadow: 0 0 15px 6px rgba(74,222,128,0.4), 0 0 5px 2px rgba(255,255,255,0.3);
-          mix-blend-mode: lighten;
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          transition: width 0.2s ease, height 0.2s ease, border-radius 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
-          opacity: 1;
-        }
-        #fancy-cursor svg {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          width: 24px;
-          height: 24px;
-          transform: translate(-50%, -50%) rotate(-45deg);
-          filter: drop-shadow(0 0 8px rgba(74, 222, 128, 0.9)) drop-shadow(0 0 16px rgba(74, 222, 128, 0.7));
-          mix-blend-mode: lighten;
-          opacity: 0;
-          transition: opacity 0.2s ease, filter 0.2s ease;
-        }
-        
-        #fancy-cursor.link-hover .fancy-cursor-dot {
-          width: 15px;
-          height: 15px;
-          background-color: rgba(74, 222, 128, 0.5);
-          box-shadow: 0 0 32px 12px rgba(74,222,128,0.7), 0 0 10px 4px rgba(255,255,255,0.5);
-        }
-        #fancy-cursor.text-hover .fancy-cursor-dot {
-          width: 2px;
-          height: 24px;
-          border-radius: 1px;
-        }
-        #fancy-cursor.resize-hover .fancy-cursor-dot {
-          opacity: 0;
-        }
-        #fancy-cursor.resize-hover svg {
-          opacity: 1;
-        }
-      `}</style>
       <div
         ref={cursorRef}
         id="fancy-cursor"
@@ -288,7 +228,6 @@ const FancyCursor = memo(() => {
             <path d="M5 19L19 5M5 19L9 19M5 19L5 15M19 5L15 5M19 5L19 9" stroke="#4ade80" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       </div>
-    </>
   );
 });
 
