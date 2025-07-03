@@ -17,13 +17,10 @@ const AboutSection = memo(() => (
                 <div className="md:w-2/3">
                     <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">Über mich</h2>
                     <p className="text-slate-600 dark:text-slate-300 mb-4">
-                        Meine Leidenschaft ist es, digitale Ideen in performante und benutzerfreundliche Web-Erlebnisse zu verwandeln. Mit einem tiefen Fokus auf React und Tailwind CSS erstelle ich moderne Web-Applikationen, die nicht nur technisch überzeugen, sondern auch visuell begeistern.
-                    </p>
-                    <p className="text-slate-600 dark:text-slate-300 mb-4">
-                        Für den E-Commerce setze ich auf die Power von Shopify. Ich konzipiere und realisiere maßgeschneiderte Online-Shops, die Ihre Marke optimal präsentieren und Ihre Verkaufsziele unterstützen – vom initialen Setup bis hin zu individuellen Theme-Anpassungen.
+                        Als Webentwickler mit einem klaren Fokus auf React, Tailwind CSS und Shopify helfe ich Unternehmen, sich in der digitalen Landschaft erfolgreich zu positionieren.
                     </p>
                     <p className="text-slate-600 dark:text-slate-300">
-                        Mein Ansatz ist dabei stets partnerschaftlich. Ich höre genau zu, um Ihre Geschäftsziele zu verstehen und eine Lösung zu entwickeln, die perfekt zu Ihnen passt und echten Mehrwert schafft.
+                        Für den E-Commerce setze ich auf die Power von Shopify. Ich konzipiere und realisiere maßgeschneiderte Online-Shops, die Ihre Marke optimal präsentieren und Ihre Verkaufsziele unterstützen – vom initialen Setup bis hin zu individuellen Theme-Anpassungen.
                     </p>
                 </div>
             </div>
