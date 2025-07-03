@@ -39,13 +39,13 @@ Live-Seite: ragusa-it.dev
 
 Das Projekt ist in eine logische Ordnerstruktur unterteilt, um die Organisation zu verbessern:
 
-src/
-├── components/      # Einzelne UI-Komponenten (Header, Footer, Sections etc.)
-├── context/         # React Context Provider (z.B. ThemeContext)
-├── images/          # Statische Bild-Assets
-├── App.js           # Haupt-App-Komponente, die das Layout zusammenfügt
-├── index.css        # Globale Stile und Tailwind-Direktiven
-└── index.js         # Einstiegspunkt der Anwendung
+    src/
+    ├── components/      # Einzelne UI-Komponenten (Header, Footer, Sections etc.)
+    ├── context/         # React Context Provider (z.B. ThemeContext)
+    ├── images/          # Statische Bild-Assets
+    ├── App.js           # Haupt-App-Komponente, die das Layout zusammenfügt
+    ├── index.css        # Globale Stile und Tailwind-Direktiven
+    └── index.js         # Einstiegspunkt der Anwendung
 
 ⚙️ Lokale Entwicklung
 
