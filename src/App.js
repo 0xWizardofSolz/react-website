@@ -178,7 +178,7 @@ const FancyCursor = memo(() => {
   return (
     <>
       <style>{`
-        body, a, button, input, textarea {
+        body, a, button, input, textarea, label {
           cursor: none;
         }
         #fancy-cursor {
