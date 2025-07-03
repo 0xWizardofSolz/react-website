@@ -223,8 +223,8 @@ const FancyCursor = memo(() => {
         
         /* States */
         #fancy-cursor.link-hover .fancy-cursor-dot {
-          width: 15px;
-          height: 15px;
+          width: 40px;
+          height: 40px;
           background-color: rgba(74, 222, 128, 0.5);
           box-shadow: 0 0 32px 12px rgba(74,222,128,0.7), 0 0 10px 4px rgba(255,255,255,0.5);
         }
@@ -401,7 +401,7 @@ const PortfolioSection = memo(() => (
         <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-12">Meine Arbeiten</h2>
         <div className="grid md:grid-cols-3 gap-8">
             {projectsData.map(p => (
-                <div key={p.title} className="bg-slate-800/50 backdrop-blur-sm border border-green-900/30 rounded-lg overflow-hidden group">
+                <div key={p.title} className="bg-slate-800/50 backdrop-blur-sm border border-green-900/30 rounded-lg overflow-hidden group shadow-lg hover:shadow-green-500/10 hover:-translate-y-2 transition-all duration-300">
                     <div className="overflow-hidden">
                         <a href={p.link} target="_blank" rel="noopener noreferrer" aria-label={`Link zu ${p.title}`} className="cursor-none">
                             <img 
@@ -436,7 +436,7 @@ const TestimonialsSection = memo(() => (
         <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-12">Was meine Kunden sagen</h2>
         <div className="max-w-3xl mx-auto grid md:grid-cols-2 gap-8">
             {testimonialsData.map(t => (
-                 <div key={t.name} className="bg-slate-800/50 backdrop-blur-sm border border-green-900/30 p-6 rounded-lg">
+                 <div key={t.name} className="bg-slate-800/50 backdrop-blur-sm border border-green-900/30 p-6 rounded-lg shadow-lg hover:shadow-green-500/10 hover:-translate-y-2 transition-all duration-300">
                     <p className="text-slate-300 italic">"{t.quote}"</p>
                     <p className="text-right mt-4 font-bold text-green-400">- {t.name}, <span className="text-slate-500 font-normal">{t.company}</span></p>
                 </div>
@@ -547,7 +547,7 @@ const ContactSection = memo(() => {
                     id="custom-resize-handle" 
                     onMouseDown={handleResizeMouseDown} 
                     className="absolute cursor-none p-1"
-                    style={{ bottom: '2px', right: '-1px' }}
+                    style={{ bottom: '1px', right: '1px' }}
                  >
                     <svg width="10" height="10" viewBox="0 0 10 10" className="stroke-current text-green-400/60" style={{ filter: 'drop-shadow(0 0 2px #4ade80)' }}>
                         <line x1="1" y1="9" x2="9" y2="1" strokeWidth="1.5" />
