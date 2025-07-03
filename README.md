@@ -39,7 +39,7 @@ Um dieses Projekt auf Ihrem lokalen Rechner auszuführen, folgen Sie diesen Schr
 
 1.  **Repository klonen:**
     ```bash
-    git clone [https://github.com/0xWizardofSolz/react-website](https://github.com/0xWizardofSolz/react-website)
+    git clone https://github.com/0xWizardofSolz/react-website
     cd react-website
     ```
 
