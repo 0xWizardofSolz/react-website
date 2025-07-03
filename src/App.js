@@ -124,7 +124,7 @@ const ParticleBackground = memo(() => {
 });
 
 
-// --- Fancy Cursor Component (Optimiert) ---
+// --- Fancy Cursor Component (Aktualisiert) ---
 const FancyCursor = memo(() => {
   const cursorRef = useRef(null);
   const [isTouch, setIsTouch] = useState(false);
@@ -136,14 +136,28 @@ const FancyCursor = memo(() => {
     };
     
     const handleMouseMove = (e) => {
-      if (cursorRef.current) {
-        cursorRef.current.style.transform = `translate3d(${e.clientX - 4}px, ${e.clientY - 4}px, 0)`;
-        const el = document.elementFromPoint(e.clientX, e.clientY);
-        if (el && el.closest('a, button')) {
-            cursorRef.current.style.boxShadow = '0 0 32px 12px rgba(74,222,128,0.7), 0 0 10px 4px rgba(255,255,255,0.5)';
+      const cursor = cursorRef.current;
+      if (!cursor) return;
+
+      // Position the cursor element
+      cursor.style.left = `${e.clientX}px`;
+      cursor.style.top = `${e.clientY}px`;
+      
+      // Check element under cursor and apply styles
+      const el = document.elementFromPoint(e.clientX, e.clientY);
+      
+      if (el) {
+        if (el.closest('input[type="text"], input[type="email"], textarea')) {
+          cursor.classList.add('text-hover');
+          cursor.classList.remove('link-hover');
+        } else if (el.closest('a, button')) {
+          cursor.classList.add('link-hover');
+          cursor.classList.remove('text-hover');
         } else {
-            cursorRef.current.style.boxShadow = '0 0 15px 6px rgba(74,222,128,0.4), 0 0 5px 2px rgba(255,255,255,0.3)';
+          cursor.classList.remove('link-hover', 'text-hover');
         }
+      } else {
+        cursor.classList.remove('link-hover', 'text-hover');
       }
     };
     
@@ -162,13 +176,38 @@ const FancyCursor = memo(() => {
   if (isTouch) return null;
 
   return (
-    <div
-      ref={cursorRef}
-      className="fixed top-0 left-0 w-2 h-2 pointer-events-none z-[100] rounded-full bg-green-400 mix-blend-lighten transition-shadow duration-200" // z-index erhöht
-      style={{
-        boxShadow: '0 0 15px 6px rgba(74,222,128,0.4), 0 0 5px 2px rgba(255,255,255,0.3)',
-      }}
-    />
+    <>
+      <style>{`
+        body, a, button, input, textarea {
+          cursor: none;
+        }
+        #fancy-cursor {
+          --size: 8px;
+          width: var(--size);
+          height: var(--size);
+          border-radius: 50%;
+          transform: translate(-50%, -50%);
+          transition: width 0.2s ease, height 0.2s ease, border-radius 0.2s ease, box-shadow 0.2s ease;
+          box-shadow: 0 0 15px 6px rgba(74,222,128,0.4), 0 0 5px 2px rgba(255,255,255,0.3);
+        }
+        #fancy-cursor.link-hover {
+          --size: 40px;
+          background-color: rgba(74, 222, 128, 0.5);
+          box-shadow: 0 0 32px 12px rgba(74,222,128,0.7), 0 0 10px 4px rgba(255,255,255,0.5);
+        }
+        #fancy-cursor.text-hover {
+          width: 2px;
+          height: 24px;
+          border-radius: 1px;
+          box-shadow: 0 0 10px 2px rgba(74,222,128,0.6);
+        }
+      `}</style>
+      <div
+        ref={cursorRef}
+        id="fancy-cursor"
+        className="fixed top-0 left-0 pointer-events-none z-[100] bg-green-400 mix-blend-lighten"
+      />
+    </>
   );
 });
 
@@ -326,7 +365,7 @@ const PortfolioSection = memo(() => (
                             <img 
                                 src={p.imgSrc} 
                                 alt={p.title} 
-                                className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300 cursor-none" // cursor-none hinzugefügt
+                                className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300 cursor-none"
                                 loading="lazy"
                             />
                         </a>
