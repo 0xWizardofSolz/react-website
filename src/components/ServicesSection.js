@@ -1,6 +1,7 @@
-// --- Services Section ---
-import {Briefcase, Code, Zap} from "lucide-react";
-import React, {memo} from "react";
+// src/components/ServicesSection.js
+import React, { memo } from "react";
+import { Briefcase, Code, Zap } from "lucide-react";
+import { Section, SectionCard } from './Reusable';
 
 const servicesData = [
     { icon: Code, title: "Webentwicklung", description: "Maßgeschneiderte, performante Websites und Applikationen, die auf Ihre Bedürfnisse zugeschnitten sind – von Landingpages bis zu komplexen Systemen." },
@@ -25,3 +26,5 @@ const ServicesSection = memo(() => (
         </div>
     </Section>
 ));
+
+export default ServicesSection;

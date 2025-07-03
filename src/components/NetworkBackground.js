@@ -1,3 +1,7 @@
+// src/components/NetworkBackground.js
+import React, { memo, useRef, useContext, useEffect } from 'react';
+import { ThemeContext } from '../context/ThemeContext';
+
 // --- Network Node Background Component ---
 const NetworkBackground = memo(() => {
     const canvasRef = useRef(null);
@@ -96,3 +100,5 @@ const NetworkBackground = memo(() => {
 
     return <canvas ref={canvasRef} className="fixed top-0 left-0 w-full h-full z-0" />;
 });
+
+export default NetworkBackground;

@@ -1,4 +1,8 @@
-// --- About Section ---
+// src/components/AboutSection.js
+import React, { memo } from 'react';
+import { Section, SectionCard } from './Reusable';
+import profilePicture from '../images/profile-picture.png';
+
 const AboutSection = memo(() => (
     <Section id="about">
         <SectionCard className="max-w-5xl">
@@ -23,3 +27,5 @@ const AboutSection = memo(() => (
         </SectionCard>
     </Section>
 ));
+
+export default AboutSection;

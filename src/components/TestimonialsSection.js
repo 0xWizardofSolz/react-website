@@ -1,4 +1,7 @@
-// --- Testimonials Section ---
+// src/components/TestimonialsSection.js
+import React, { memo } from 'react';
+import { Section, SectionCard } from './Reusable';
+
 const testimonialsData = [
     { quote: "Für mein Projektstudio brauchte ich unbedingt eine Website mit einem einfachen, aber reaktiven Design und einem soliden Backend mit Zukunftspotenzial. Absolut empfehlenswert!", name: "Tarek B.", company: "Studio 31 Media" },
     { quote: "Melvin hat unsere Vision für einen Shop mit Produkt-Personalisierer dank herausragendem UI/UX und technischer Expertise perfekt umgesetzt.", name: "Gideon G.", company: "Kistenblende" }
@@ -17,3 +20,5 @@ const TestimonialsSection = memo(() => (
         </div>
     </Section>
 ));
+
+export default TestimonialsSection;
