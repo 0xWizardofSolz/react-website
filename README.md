@@ -57,6 +57,25 @@ Um dieses Projekt auf Ihrem lokalen Rechner auszuführen, folgen Sie diesen Schr
 
 ---
 
+
+## 📦 Statische Version exportieren
+
+Da dieses Projekt mit Create React App erstellt wurde, können Sie ganz einfach eine statische, für die Produktion optimierte Version Ihrer Website erstellen.
+
+1.  **Build-Befehl ausführen:**
+    Führen Sie den folgenden Befehl in Ihrem Terminal aus:
+    ```bash
+    npm run build
+    ```
+
+2.  **Ergebnis:**
+    Dieser Befehl erstellt einen `build`-Ordner im Stammverzeichnis Ihres Projekts. Dieser Ordner enthält alle statischen Dateien (HTML, CSS, JavaScript), die für das Deployment benötigt werden.
+
+3.  **Verwendung:**
+    Der Inhalt des `build`-Ordners kann auf jeden beliebigen statischen Hosting-Anbieter wie Netlify, Vercel oder GitHub Pages hochgeladen werden.
+
+---
+
 ## 🚀 Deployment
 
 Diese Seite ist für ein einfaches Deployment mit Netlify konfiguriert.
