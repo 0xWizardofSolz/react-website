@@ -382,7 +382,7 @@ const ContactSection = memo(() => {
     }
   }, [errors]);
 
-  const validateForm = () => {
+  const validateForm = useCallback(() => {
     const newErrors = {};
     if (!formData.name.trim()) newErrors.name = "Name ist erforderlich.";
     if (!formData.email.trim()) {
@@ -393,7 +393,7 @@ const ContactSection = memo(() => {
     if (!formData.message.trim()) newErrors.message = "Nachricht ist erforderlich.";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
+  }, [formData]);
 
   const handleResizeMouseMove = useCallback((e) => { if (isResizing.current) { const newHeight = startHeight.current + e.clientY - startY.current; textareaRef.current.style.height = `${Math.max(120, newHeight)}px`; } }, []);
   const handleResizeMouseUp = useCallback(() => { isResizing.current = false; window.removeEventListener('mousemove', handleResizeMouseMove); window.removeEventListener('mouseup', handleResizeMouseUp); }, [handleResizeMouseMove]);
@@ -416,7 +416,7 @@ const ContactSection = memo(() => {
       setFormStatus({ submitting: false, success: false, error: 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.' });
       console.error('Form submission error:', error);
     }
-  }, [formData]);
+  }, [formData, validateForm]);
 
   return (
     <Section id="contact">
