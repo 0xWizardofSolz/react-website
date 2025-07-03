@@ -12,12 +12,12 @@ const AboutSection = memo(() => (
                         <img src={profilePicture} alt="Melvin Ragusa" className="rounded-full w-full h-full object-cover" loading="lazy" />
                     </div>
                     <h3 className="text-2xl font-bold text-slate-900 dark:text-white">Melvin Ragusa</h3>
-                    <p className="text-green-600 dark:text-green-400 font-mono">IT-Consultant</p>
+                    <p className="text-green-600 dark:text-green-400 font-mono">Webentwickler</p>
                 </div>
                 <div className="md:w-2/3">
                     <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">Über mich</h2>
                     <p className="text-slate-600 dark:text-slate-300 mb-4">
-                        Als IT-Berater und Webentwickler mit Schwerpunkt auf Shopify- & React-Entwicklung sowie Automatisierung, helfe ich Unternehmen, sich in der digitalen Landschaft zu behaupten.
+                        Als Webentwickler mit einem klaren Fokus auf React, Tailwind CSS und Shopify helfe ich Unternehmen, sich in der digitalen Landschaft erfolgreich zu positionieren.
                     </p>
                     <p className="text-slate-600 dark:text-slate-300">
                         Mein Ansatz ist kollaborativ und klientorientiert. Ich nehme mir die Zeit, Ihre individuellen Herausforderungen und Ziele zu verstehen, um Lösungen zu entwickeln, die nicht nur technisch fundiert, sondern auch perfekt mit Ihrer Geschäftsstrategie übereinstimmen.

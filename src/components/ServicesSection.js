@@ -1,11 +1,11 @@
 // src/components/ServicesSection.js
 import React, { memo } from "react";
-import { Briefcase, Code, Zap } from "lucide-react";
+import { ShoppingCart, Code, Zap } from "lucide-react";
 import { Section, SectionCard } from './Reusable';
 
 const servicesData = [
-    { icon: Code, title: "Webentwicklung", description: "Maßgeschneiderte, performante Websites und Applikationen, die auf Ihre Bedürfnisse zugeschnitten sind – von Landingpages bis zu komplexen Systemen." },
-    { icon: Briefcase, title: "IT-Beratung", description: "Fachkundige Beratung für Shopify-Store-Setups, Systemintegrationen und digitale Strategien zur Optimierung Ihrer Online-Präsenz." },
+    { icon: Code, title: "Webentwicklung", description: "Maßgeschneiderte Web-Applikationen mit React und Tailwind CSS. Modern, performant und perfekt auf Ihre individuellen Anforderungen zugeschnitten." },
+    { icon: ShoppingCart, title: "Shopify Store Setup", description: "Professionelles Setup und Optimierung Ihres Shopify Stores. Von der Konfiguration bis zum individuellen Theme – für einen erfolgreichen E-Commerce-Start." },
     { icon: Zap, title: "Automatisierung", description: "Leistungsstarke Automatisierung von Workflows und Geschäftsprozessen zur Steigerung der Produktivität und Reduzierung des manuellen Aufwands." }
 ];
 
