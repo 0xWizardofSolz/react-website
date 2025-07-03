@@ -1,7 +1,7 @@
 // --- Portfolio Section ---
-import kistenblendeImg from "../src/images/Kistenblende.png";
-import studio31Img from "../src/images/Studio31.png";
-import automationImg from "../src/images/Automation.png";
+import kistenblendeImg from "../images/Kistenblende.png";
+import studio31Img from "../images/Studio31.png";
+import automationImg from "../images/Automation.png";
 import React, {memo} from "react";
 
 const projectsData = [
