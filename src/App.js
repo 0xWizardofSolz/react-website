@@ -1,9 +1,29 @@
-import React, { useState, useEffect, useRef, memo, useCallback } from 'react';
-import { Briefcase, Zap, Code, X, LoaderCircle } from 'lucide-react';
+import React, { useState, useEffect, useRef, memo, useCallback, createContext, useContext } from 'react';
+import { Briefcase, Zap, Code, X, LoaderCircle, Sun, Moon } from 'lucide-react';
 
-// --- Particle-Hintergrund Komponente (Optimiert) ---
-const ParticleBackground = memo(() => {
+// --- Theme Context ---
+const ThemeContext = createContext();
+
+const ThemeProvider = ({ children }) => {
+  const [theme, setTheme] = useState('dark');
+
+  useEffect(() => {
+    const root = window.document.documentElement;
+    root.classList.remove('light', 'dark');
+    root.classList.add(theme);
+  }, [theme]);
+
+  return (
+    <ThemeContext.Provider value={{ theme, setTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+};
+
+// --- Network Node Background Component ---
+const NetworkBackground = memo(() => {
     const canvasRef = useRef(null);
+    const { theme } = useContext(ThemeContext);
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -14,9 +34,26 @@ const ParticleBackground = memo(() => {
         let animationFrameId;
         let particlesArray = [];
 
+        // Define colors based on the theme
+        const colors = {
+            light: {
+                background: 'hsl(210 40% 98%)', // slate-50
+                particle: 'hsl(210 4% 45%)',    // slate-600
+                line: 'hsl(210 4% 65%)'         // slate-400
+            },
+            dark: {
+                background: 'hsl(222.2 84% 4.9%)', // slate-950
+                particle: 'hsl(215 25% 27%)',       // slate-700
+                line: 'hsl(215 25% 35%)'            // slate-600/50
+            }
+        };
+
+        const currentColors = colors[theme] || colors.dark;
+
+        // Korrigierte Resize-Funktion, um Verzerrungen zu vermeiden
         const resizeCanvas = () => {
             canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight; // Zurück zu innerHeight, um Verzerrungen zu vermeiden
+            canvas.height = window.innerHeight; // FIX: Höhe an den Viewport anpassen, nicht an die Scroll-Höhe
             init();
         };
 
@@ -55,30 +92,32 @@ const ParticleBackground = memo(() => {
             particlesArray = [];
             let numberOfParticles = (canvas.height * canvas.width) / 12000;
             for (let i = 0; i < numberOfParticles; i++) {
-                let size = (Math.random() * 1.5) + 0.5;
+                let size = (Math.random() * 1.2) + 0.5;
                 let x = Math.random() * canvas.width;
                 let y = Math.random() * canvas.height;
                 let directionX = (Math.random() * 0.3) - 0.15;
                 let directionY = (Math.random() * 0.3) - 0.15;
-                let color = '#4ade80';
-
-                particlesArray.push(new Particle(x, y, directionX, directionY, size, color));
+                
+                particlesArray.push(new Particle(x, y, directionX, directionY, size, currentColors.particle));
             }
         };
 
         const connect = () => {
             let opacityValue = 1;
-            // Die Verbindungsdistanz sollte sich an der kleineren Dimension orientieren, um Verzerrungen zu vermeiden
             const connectDistance = (Math.min(canvas.width, canvas.height) / 7) ** 2;
             for (let a = 0; a < particlesArray.length; a++) {
                 for (let b = a; b < particlesArray.length; b++) {
-                    let distance = ((particlesArray[a].x - particlesArray[b].x) ** 2) +
-                        ((particlesArray[a].y - particlesArray[b].y) ** 2);
+                    let distance = ((particlesArray[a].x - particlesArray[b].x) ** 2) + ((particlesArray[a].y - particlesArray[b].y) ** 2);
 
                     if (distance < connectDistance) {
                         opacityValue = 1 - (distance / 20000);
-                        ctx.strokeStyle = `rgba(74, 222, 128, ${opacityValue})`;
-                        ctx.lineWidth = 1;
+                        const rgbLine = currentColors.line.match(/\d+/g);
+                        if (rgbLine && rgbLine.length >= 3) {
+                           ctx.strokeStyle = `rgba(${rgbLine[0]}, ${rgbLine[1]}, ${rgbLine[2]}, ${opacityValue})`;
+                        } else {
+                           ctx.strokeStyle = `rgba(100, 116, 139, ${opacityValue})`; // Fallback
+                        }
+                        ctx.lineWidth = 0.5;
                         ctx.beginPath();
                         ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
                         ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
@@ -90,7 +129,7 @@ const ParticleBackground = memo(() => {
         
         const animate = () => {
             animationFrameId = requestAnimationFrame(animate);
-            ctx.fillStyle = '#0f172a';
+            ctx.fillStyle = currentColors.background;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             for (let i = 0; i < particlesArray.length; i++) {
@@ -118,13 +157,13 @@ const ParticleBackground = memo(() => {
             cancelAnimationFrame(animationFrameId);
             window.removeEventListener('resize', debouncedResize);
         };
-    }, []);
+    }, [theme]); // Rerun effect when theme changes
 
     return <canvas ref={canvasRef} className="fixed top-0 left-0 w-full h-full z-0" />;
 });
 
 
-// --- Fancy Cursor Component (Aktualisiert) ---
+// --- Fancy Cursor Component ---
 const FancyCursor = memo(() => {
   const cursorRef = useRef(null);
   const [isTouch, setIsTouch] = useState(false);
@@ -139,11 +178,9 @@ const FancyCursor = memo(() => {
       const cursor = cursorRef.current;
       if (!cursor) return;
 
-      // Position the cursor element
       cursor.style.left = `${e.clientX}px`;
       cursor.style.top = `${e.clientY}px`;
       
-      // Check element under cursor and apply styles
       const el = document.elementFromPoint(e.clientX, e.clientY);
       
       if (el) {
@@ -221,7 +258,6 @@ const FancyCursor = memo(() => {
           transition: opacity 0.2s ease, filter 0.2s ease;
         }
         
-        /* States */
         #fancy-cursor.link-hover .fancy-cursor-dot {
           width: 15px;
           height: 15px;
@@ -253,6 +289,27 @@ const FancyCursor = memo(() => {
   );
 });
 
+// --- Theme Toggle Button ---
+const ThemeToggleButton = () => {
+  const { theme, setTheme } = useContext(ThemeContext);
+
+  const toggleTheme = () => {
+    setTheme(theme === 'light' ? 'dark' : 'light');
+  };
+
+  return (
+    <button
+      onClick={toggleTheme}
+      className="p-2 rounded-full text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
+      aria-label="Toggle theme"
+    >
+      <Sun className="h-5 w-5 hidden dark:block" />
+      <Moon className="h-5 w-5 block dark:hidden" />
+    </button>
+  );
+};
+
+
 // --- Main App Component ---
 export default function App() {
   const [impressumVisible, setImpressumVisible] = useState(false);
@@ -261,38 +318,41 @@ export default function App() {
   const closeImpressum = useCallback(() => setImpressumVisible(false), []);
 
   return (
-    <div className="text-slate-300 font-sans leading-relaxed tracking-wide bg-slate-900">
-      <FancyCursor />
-      <ParticleBackground />
-      <div className="relative z-10">
-        <Header />
-        <main className="container mx-auto px-6 py-12 md:py-20">
-          <HeroSection />
-          <AboutSection />
-          <ServicesSection />
-          <PortfolioSection />
-          <TestimonialsSection />
-          <ContactSection />
-        </main>
-        <Footer onImpressumClick={openImpressum} />
-      </div>
-      {impressumVisible && <ImpressumModal onClose={closeImpressum} />}
-    </div>
+    <ThemeProvider>
+        <div className="text-slate-700 dark:text-slate-300 font-sans leading-relaxed tracking-wide bg-slate-50 dark:bg-slate-950">
+            <FancyCursor />
+            <NetworkBackground />
+            <div className="relative z-10">
+                <Header />
+                <main className="container mx-auto px-6 py-12 md:py-20">
+                    <HeroSection />
+                    <AboutSection />
+                    <ServicesSection />
+                    <PortfolioSection />
+                    <TestimonialsSection />
+                    <ContactSection />
+                </main>
+                <Footer onImpressumClick={openImpressum} />
+            </div>
+            {impressumVisible && <ImpressumModal onClose={closeImpressum} />}
+        </div>
+    </ThemeProvider>
   );
 }
 
 // --- Header Component ---
 const Header = memo(() => (
-  <header className="bg-slate-900/70 backdrop-blur-sm sticky top-0 z-40 border-b border-green-900/30">
-    <div className="container mx-auto flex items-center justify-between p-4 text-white">
+  <header className="bg-slate-50/80 dark:bg-slate-950/70 backdrop-blur-sm sticky top-0 z-40 border-b border-slate-200 dark:border-green-900/30">
+    <div className="container mx-auto flex items-center justify-between p-4 text-slate-900 dark:text-white">
       <a href="#home" className="text-2xl font-bold tracking-wider cursor-none">
-        ragusa-it<span className="text-green-400">.dev</span>
+        ragusa-it<span className="text-green-500 dark:text-green-400">.dev</span>
       </a>
       <nav className="hidden md:flex items-center space-x-6">
-        <a href="#about" className="hover:text-green-400 transition-colors duration-300 cursor-none">Über mich</a>
-        <a href="#services" className="hover:text-green-400 transition-colors duration-300 cursor-none">Leistungen</a>
-        <a href="#portfolio" className="hover:text-green-400 transition-colors duration-300 cursor-none">Portfolio</a>
+        <a href="#about" className="text-slate-600 dark:text-slate-300 hover:text-green-600 dark:hover:text-green-400 transition-colors duration-300 cursor-none">Über mich</a>
+        <a href="#services" className="text-slate-600 dark:text-slate-300 hover:text-green-600 dark:hover:text-green-400 transition-colors duration-300 cursor-none">Leistungen</a>
+        <a href="#portfolio" className="text-slate-600 dark:text-slate-300 hover:text-green-600 dark:hover:text-green-400 transition-colors duration-300 cursor-none">Portfolio</a>
         <a href="#contact" className="bg-green-500 hover:bg-green-600 text-slate-900 font-bold py-2 px-4 rounded-md text-sm transition-all duration-300 cursor-none">Kontakt</a>
+        <ThemeToggleButton />
       </nav>
     </div>
   </header>
@@ -301,12 +361,12 @@ const Header = memo(() => (
 // --- Hero Section Component ---
 const HeroSection = memo(() => (
   <section id="home" className="py-20 md:py-32">
-    <div className="bg-slate-800/50 backdrop-blur-sm border border-green-900/30 rounded-lg shadow-2xl shadow-green-900/10 p-8 max-w-3xl mx-auto">
-      <h2 className="text-xl md:text-2xl text-green-300 font-mono mb-2 text-center">Melvin Ragusa | Inhaber & IT-Consultant</h2>
-      <h1 className="text-4xl md:text-7xl font-extrabold text-slate-100 mb-4 leading-tight text-center" style={{textShadow: '0 0 15px rgba(74, 222, 128, 0.4), 0 0 5px rgba(255, 255, 255, 0.3)'}}>
+    <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200 dark:border-green-900/30 rounded-lg shadow-2xl shadow-slate-300/20 dark:shadow-green-900/10 p-8 max-w-3xl mx-auto">
+      <h2 className="text-xl md:text-2xl text-green-600 dark:text-green-300 font-mono mb-2 text-center">Melvin Ragusa | Inhaber & IT-Consultant</h2>
+      <h1 className="text-4xl md:text-7xl font-extrabold text-slate-900 dark:text-slate-100 mb-4 leading-tight text-center" style={{textShadow: '0 0 15px rgba(74, 222, 128, 0.4), 0 0 5px rgba(255, 255, 255, 0.3)'}}>
         Webentwicklung • IT-Beratung • Automatisierung
       </h1>
-      <p className="text-lg md:text-xl text-slate-300 max-w-3xl mx-auto mb-8 text-center">
+      <p className="text-lg md:text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto mb-8 text-center">
         Ich entwickle leistungsstarke Websites, biete fachkundige IT-Beratung und erstelle wirkungsvolle Automatisierungen, um Ihre Geschäftsprozesse zu optimieren.
       </p>
       <div className="text-center">
@@ -324,21 +384,21 @@ const HeroSection = memo(() => (
 // --- About Section ---
 const AboutSection = memo(() => (
   <section id="about" className="py-20">
-    <div className="bg-slate-800/50 backdrop-blur-sm border border-green-900/30 rounded-lg shadow-2xl shadow-green-900/10 p-8 max-w-5xl mx-auto">
+    <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200 dark:border-green-900/30 rounded-lg shadow-2xl shadow-slate-300/20 dark:shadow-green-900/10 p-8 max-w-5xl mx-auto">
       <div className="flex flex-col md:flex-row items-center gap-12">
         <div className="md:w-1/3 text-center md:text-left">
-          <div className="w-48 h-48 mx-auto md:mx-0 rounded-full bg-slate-800 border-2 border-green-500 p-2 mb-4">
+          <div className="w-48 h-48 mx-auto md:mx-0 rounded-full bg-slate-200 dark:bg-slate-800 border-2 border-green-500 p-2 mb-4">
             <img src="/images/profile-picture.png" alt="Melvin Ragusa" className="rounded-full w-full h-full object-cover" loading="lazy" />
           </div>
-          <h3 className="text-2xl font-bold text-white">Melvin Ragusa</h3>
-          <p className="text-green-400 font-mono">IT-Consultant</p>
+          <h3 className="text-2xl font-bold text-slate-900 dark:text-white">Melvin Ragusa</h3>
+          <p className="text-green-600 dark:text-green-400 font-mono">IT-Consultant</p>
         </div>
         <div className="md:w-2/3">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Über mich</h2>
-          <p className="text-slate-300 mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">Über mich</h2>
+          <p className="text-slate-600 dark:text-slate-300 mb-4">
             Als IT-Berater und Webentwickler mit Schwerpunkt auf Shopify- & React-Entwicklung sowie Automatisierung, helfe ich Unternehmen, sich in der digitalen Landschaft zu behaupten.
           </p>
-          <p className="text-slate-300">
+          <p className="text-slate-600 dark:text-slate-300">
             Mein Ansatz ist kollaborativ und klientorientiert. Ich nehme mir die Zeit, Ihre individuellen Herausforderungen und Ziele zu verstehen, um Lösungen zu entwickeln, die nicht nur technisch fundiert, sondern auch perfekt mit Ihrer Geschäftsstrategie übereinstimmen.
           </p>
         </div>
@@ -356,15 +416,15 @@ const servicesData = [
 
 const ServicesSection = memo(() => (
     <section id="services" className="py-20">
-        <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-12">Meine Leistungen</h2>
+        <h2 className="text-3xl md:text-4xl font-bold text-center text-slate-900 dark:text-white mb-12">Meine Leistungen</h2>
         <div className="grid md:grid-cols-3 gap-8">
             {servicesData.map((service) => {
                 const Icon = service.icon;
                 return (
-                    <div key={service.title} className="bg-slate-800/50 backdrop-blur-sm border border-green-900/30 p-8 rounded-lg shadow-lg hover:shadow-green-500/10 hover:-translate-y-2 transition-all duration-300 flex flex-col items-center text-center">
-                        <Icon size={40} className="text-green-400 mb-4" />
-                        <h3 className="text-2xl font-bold text-white mb-3">{service.title}</h3>
-                        <p className="text-slate-400">{service.description}</p>
+                    <div key={service.title} className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200 dark:border-green-900/30 p-8 rounded-lg shadow-lg hover:shadow-green-500/10 hover:-translate-y-2 transition-all duration-300 flex flex-col items-center text-center">
+                        <Icon size={40} className="text-green-500 dark:text-green-400 mb-4" />
+                        <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-3">{service.title}</h3>
+                        <p className="text-slate-600 dark:text-slate-400">{service.description}</p>
                     </div>
                 );
             })}
@@ -398,10 +458,10 @@ const projectsData = [
 
 const PortfolioSection = memo(() => (
     <section id="portfolio" className="py-20">
-        <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-12">Meine Arbeiten</h2>
+        <h2 className="text-3xl md:text-4xl font-bold text-center text-slate-900 dark:text-white mb-12">Meine Arbeiten</h2>
         <div className="grid md:grid-cols-3 gap-8">
             {projectsData.map(p => (
-                <div key={p.title} className="bg-slate-800/50 backdrop-blur-sm border border-green-900/30 rounded-lg overflow-hidden group shadow-lg hover:shadow-green-500/10 hover:-translate-y-2 transition-all duration-300">
+                <div key={p.title} className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200 dark:border-green-900/30 rounded-lg overflow-hidden group shadow-lg hover:shadow-green-500/10 hover:-translate-y-2 transition-all duration-300">
                     <div className="overflow-hidden">
                         <a href={p.link} target="_blank" rel="noopener noreferrer" aria-label={`Link zu ${p.title}`} className="cursor-none">
                             <img 
@@ -413,10 +473,10 @@ const PortfolioSection = memo(() => (
                         </a>
                     </div>
                     <div className="p-6">
-                        <h3 className="text-xl font-bold text-white mb-2">{p.title}</h3>
-                        <p className="text-slate-400 text-sm mb-4">{p.description}</p>
+                        <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">{p.title}</h3>
+                        <p className="text-slate-600 dark:text-slate-400 text-sm mb-4">{p.description}</p>
                         <div className="flex flex-wrap gap-2">
-                            {p.tags.map(tag => <span key={tag} className="bg-green-900/50 text-green-300 text-xs font-mono px-2 py-1 rounded">{tag}</span>)}
+                            {p.tags.map(tag => <span key={tag} className="bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300 text-xs font-mono px-2 py-1 rounded">{tag}</span>)}
                         </div>
                     </div>
                 </div>
@@ -433,12 +493,12 @@ const testimonialsData = [
 
 const TestimonialsSection = memo(() => (
     <section id="testimonials" className="py-20">
-        <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-12">Was meine Kunden sagen</h2>
+        <h2 className="text-3xl md:text-4xl font-bold text-center text-slate-900 dark:text-white mb-12">Was meine Kunden sagen</h2>
         <div className="max-w-3xl mx-auto grid md:grid-cols-2 gap-8">
             {testimonialsData.map(t => (
-                 <div key={t.name} className="bg-slate-800/50 backdrop-blur-sm border border-green-900/30 p-6 rounded-lg shadow-lg hover:shadow-green-500/10 hover:-translate-y-2 transition-all duration-300">
-                    <p className="text-slate-300 italic">"{t.quote}"</p>
-                    <p className="text-right mt-4 font-bold text-green-400">- {t.name}, <span className="text-slate-500 font-normal">{t.company}</span></p>
+                 <div key={t.name} className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200 dark:border-green-900/30 p-6 rounded-lg shadow-lg hover:shadow-green-500/10 hover:-translate-y-2 transition-all duration-300">
+                    <p className="text-slate-600 dark:text-slate-300 italic">"{t.quote}"</p>
+                    <p className="text-right mt-4 font-bold text-green-600 dark:text-green-400">- {t.name}, <span className="text-slate-500 dark:text-slate-500 font-normal">{t.company}</span></p>
                 </div>
             ))}
         </div>
@@ -465,7 +525,7 @@ const ContactSection = memo(() => {
   const handleResizeMouseMove = useCallback((e) => {
     if (isResizing.current) {
       const newHeight = startHeight.current + e.clientY - startY.current;
-      textareaRef.current.style.height = `${Math.max(120, newHeight)}px`; // Mindesthöhe 120px
+      textareaRef.current.style.height = `${Math.max(120, newHeight)}px`;
     }
   }, []);
 
@@ -515,12 +575,12 @@ const ContactSection = memo(() => {
   return (
     <section id="contact" className="py-20">
       <div className="max-w-3xl mx-auto">
-        <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-8">Kontakt</h2>
-        <div className="bg-slate-800/50 backdrop-blur-sm border border-green-900/30 p-8 rounded-lg shadow-2xl shadow-green-900/10">
+        <h2 className="text-3xl md:text-4xl font-bold text-center text-slate-900 dark:text-white mb-8">Kontakt</h2>
+        <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200 dark:border-green-900/30 p-8 rounded-lg shadow-2xl shadow-slate-300/20 dark:shadow-green-900/10">
           {formStatus.success ? (
-            <div className="text-center p-8 bg-green-900/50 rounded-lg">
-              <h3 className="text-2xl font-bold text-green-300">Vielen Dank!</h3>
-              <p className="text-green-200 mt-2">Ihre Nachricht wurde erfolgreich gesendet. Ich werde mich in Kürze bei Ihnen melden.</p>
+            <div className="text-center p-8 bg-green-100 dark:bg-green-900/50 rounded-lg">
+              <h3 className="text-2xl font-bold text-green-800 dark:text-green-300">Vielen Dank!</h3>
+              <p className="text-green-700 dark:text-green-200 mt-2">Ihre Nachricht wurde erfolgreich gesendet. Ich werde mich in Kürze bei Ihnen melden.</p>
             </div>
           ) : (
             <form name="contact" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" onSubmit={handleSubmit}>
@@ -532,24 +592,24 @@ const ContactSection = memo(() => {
               </p>
               <div className="grid md:grid-cols-2 gap-6 mb-6">
                 <div>
-                  <label htmlFor="name" className="block text-slate-400 mb-2 font-mono text-sm">Name</label>
-                  <input type="text" id="name" name="name" value={formData.name} onChange={handleInputChange} className="w-full bg-slate-900 border border-slate-700 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-green-500" required autoComplete="name" />
+                  <label htmlFor="name" className="block text-slate-500 dark:text-slate-400 mb-2 font-mono text-sm">Name</label>
+                  <input type="text" id="name" name="name" value={formData.name} onChange={handleInputChange} className="w-full bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-md py-2 px-4 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500" required autoComplete="name" />
                 </div>
                 <div>
-                  <label htmlFor="email" className="block text-slate-400 mb-2 font-mono text-sm">Email</label>
-                  <input type="email" id="email" name="email" value={formData.email} onChange={handleInputChange} className="w-full bg-slate-900 border border-slate-700 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-green-500" required autoComplete="email" />
+                  <label htmlFor="email" className="block text-slate-500 dark:text-slate-400 mb-2 font-mono text-sm">Email</label>
+                  <input type="email" id="email" name="email" value={formData.email} onChange={handleInputChange} className="w-full bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-md py-2 px-4 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500" required autoComplete="email" />
                 </div>
               </div>
               <div className="mb-6 relative">
-                <label htmlFor="message" className="block text-slate-400 mb-2 font-mono text-sm">Nachricht</label>
-                <textarea ref={textareaRef} id="message" name="message" value={formData.message} onChange={handleInputChange} className="w-full bg-slate-900 border border-slate-700 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-green-500 resize-none" style={{height: '120px'}} required></textarea>
+                <label htmlFor="message" className="block text-slate-500 dark:text-slate-400 mb-2 font-mono text-sm">Nachricht</label>
+                <textarea ref={textareaRef} id="message" name="message" value={formData.message} onChange={handleInputChange} className="w-full bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-md py-2 px-4 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 resize-none" style={{height: '120px'}} required></textarea>
                  <div 
                     id="custom-resize-handle" 
                     onMouseDown={handleResizeMouseDown} 
                     className="absolute cursor-none p-1"
                     style={{ bottom: '2px', right: '-1px' }}
                  >
-                    <svg width="10" height="10" viewBox="0 0 10 10" className="stroke-current text-green-400/60" style={{ filter: 'drop-shadow(0 0 2px #4ade80)' }}>
+                    <svg width="10" height="10" viewBox="0 0 10 10" className="stroke-current text-green-500/60 dark:text-green-400/60" style={{ filter: 'drop-shadow(0 0 2px #4ade80)' }}>
                         <line x1="1" y1="9" x2="9" y2="1" strokeWidth="1.5" />
                         <line x1="5" y1="9" x2="9" y2="5" strokeWidth="1.5" />
                     </svg>
@@ -561,7 +621,7 @@ const ContactSection = memo(() => {
                   {formStatus.submitting ? 'Wird gesendet...' : 'Nachricht senden'}
                 </button>
               </div>
-              {formStatus.error && <p className="text-red-400 text-center mt-4">{formStatus.error}</p>}
+              {formStatus.error && <p className="text-red-500 dark:text-red-400 text-center mt-4">{formStatus.error}</p>}
             </form>
           )}
         </div>
@@ -572,10 +632,10 @@ const ContactSection = memo(() => {
 
 // --- Footer Component ---
 const Footer = memo(({ onImpressumClick }) => (
-  <footer className="bg-slate-900/80 backdrop-blur-sm border-t border-green-900/30 relative z-10">
-    <div className="container mx-auto py-6 px-6 text-center text-slate-500">
+  <footer className="bg-slate-100/80 dark:bg-slate-900/80 backdrop-blur-sm border-t border-slate-200 dark:border-green-900/30 relative z-10">
+    <div className="container mx-auto py-6 px-6 text-center text-slate-600 dark:text-slate-500">
         <p>&copy; {new Date().getFullYear()} Melvin Ragusa | Ragusa IT-Consulting. Alle Rechte vorbehalten.</p>
-        <button onClick={onImpressumClick} className="mt-2 text-sm hover:text-green-400 underline transition-colors duration-300 cursor-none">
+        <button onClick={onImpressumClick} className="mt-2 text-sm hover:text-green-600 dark:hover:text-green-400 underline transition-colors duration-300 cursor-none">
             Impressum
         </button>
     </div>
@@ -585,12 +645,12 @@ const Footer = memo(({ onImpressumClick }) => (
 // --- Impressum Modal Component ---
 const ImpressumModal = memo(({ onClose }) => (
   <div className="fixed inset-0 bg-black bg-opacity-80 backdrop-blur-sm z-50 flex justify-center items-center p-4" onClick={onClose}>
-    <div className="bg-slate-800 rounded-lg shadow-2xl max-w-2xl w-full max-h-full overflow-y-auto p-8 relative border border-green-700" onClick={(e) => e.stopPropagation()}>
-      <button onClick={onClose} className="absolute top-4 right-4 text-slate-500 hover:text-white transition-colors cursor-none" aria-label="Impressum schließen">
+    <div className="bg-slate-100 dark:bg-slate-800 rounded-lg shadow-2xl max-w-2xl w-full max-h-full overflow-y-auto p-8 relative border border-slate-300 dark:border-green-700" onClick={(e) => e.stopPropagation()}>
+      <button onClick={onClose} className="absolute top-4 right-4 text-slate-600 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors cursor-none" aria-label="Impressum schließen">
         <X size={24} />
       </button>
-      <h3 className="text-2xl font-bold text-white mb-6">Impressum</h3>
-      <div className="text-slate-300 space-y-4 font-mono text-sm">
+      <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">Impressum</h3>
+      <div className="text-slate-700 dark:text-slate-300 space-y-4 font-mono text-sm">
         <p><strong>Ragusa IT-Consulting</strong><br />
         Melvin Ragusa<br />
         Provinzialstraße 177 <br />

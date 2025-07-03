@@ -3,6 +3,11 @@
 // This is the configuration file for Tailwind CSS.
 
 module.exports = {
+  // Enable dark mode using a class strategy.
+  // When the 'dark' class is present on the <html> element,
+  // dark mode styles (e.g., `dark:bg-black`) will be applied.
+  darkMode: 'class',
+  
   // The 'content' array tells Tailwind which files to scan for class names.
   // This is crucial for tree-shaking (removing unused CSS) in production.
   content: [
