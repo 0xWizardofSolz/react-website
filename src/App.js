@@ -1,6 +1,12 @@
 import React, { useState, useEffect, useRef, memo, useCallback, createContext, useContext } from 'react';
 import { Briefcase, Zap, Code, X, LoaderCircle, Sun, Moon } from 'lucide-react';
 
+// Import images from the src directory for Webpack optimization
+import profilePicture from './images/profile-picture.png';
+import kistenblendeImg from './images/Kistenblende.png';
+import studio31Img from './images/Studio31.png';
+import automationImg from './images/Automation.png';
+
 // --- Theme Context ---
 const ThemeContext = createContext();
 
@@ -20,6 +26,20 @@ const ThemeProvider = ({ children }) => {
   );
 };
 
+// --- Reusable Section Component ---
+const Section = ({ children, id, className = '' }) => (
+  <section id={id} className={`py-20 scroll-mt-20 ${className}`}>
+    {children}
+  </section>
+);
+
+const SectionCard = ({ children, className = '' }) => (
+    <div className={`bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200 dark:border-green-900/30 rounded-lg shadow-2xl shadow-slate-300/20 dark:shadow-green-900/10 p-8 mx-auto ${className}`}>
+        {children}
+    </div>
+);
+
+
 // --- Network Node Background Component ---
 const NetworkBackground = memo(() => {
     const canvasRef = useRef(null);
@@ -34,57 +54,30 @@ const NetworkBackground = memo(() => {
         let animationFrameId;
         let particlesArray = [];
 
-        // Define colors based on the theme
         const colors = {
-            light: {
-                background: 'hsl(210 40% 98%)', // slate-50
-                particle: 'hsl(210 4% 45%)',    // slate-600
-                line: 'hsl(210 4% 65%)'         // slate-400
-            },
-            dark: {
-                background: 'hsl(222.2 84% 4.9%)', // slate-950
-                particle: 'hsl(215 25% 27%)',       // slate-700
-                line: 'hsl(215 25% 35%)'            // slate-600/50
-            }
+            light: { background: 'hsl(210 40% 98%)', particle: 'hsl(210 4% 45%)', line: 'hsl(210 4% 65%)' },
+            dark: { background: 'hsl(222.2 84% 4.9%)', particle: 'hsl(215 25% 27%)', line: 'hsl(215 25% 35%)' }
         };
 
         const currentColors = colors[theme] || colors.dark;
 
-        // Resize function to avoid distortion
         const resizeCanvas = () => {
             canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight; // Adjust height to the viewport, not the scroll height
+            canvas.height = window.innerHeight;
             init();
         };
 
         class Particle {
             constructor(x, y, directionX, directionY, size, color) {
-                this.x = x;
-                this.y = y;
-                this.directionX = directionX;
-                this.directionY = directionY;
-                this.size = size;
-                this.color = color;
+                this.x = x; this.y = y; this.directionX = directionX; this.directionY = directionY; this.size = size; this.color = color;
             }
-
             draw() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
-                ctx.fillStyle = this.color;
-                ctx.fill();
+                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false); ctx.fillStyle = this.color; ctx.fill();
             }
-
             update() {
-                if (this.x > canvas.width || this.x < 0) {
-                    this.directionX = -this.directionX;
-                }
-                if (this.y > canvas.height || this.y < 0) {
-                    this.directionY = -this.directionY;
-                }
-
-                this.x += this.directionX;
-                this.y += this.directionY;
-                this.draw();
+                if (this.x > canvas.width || this.x < 0) this.directionX = -this.directionX;
+                if (this.y > canvas.height || this.y < 0) this.directionY = -this.directionY;
+                this.x += this.directionX; this.y += this.directionY; this.draw();
             }
         }
 
@@ -97,7 +90,6 @@ const NetworkBackground = memo(() => {
                 let y = Math.random() * canvas.height;
                 let directionX = (Math.random() * 0.3) - 0.15;
                 let directionY = (Math.random() * 0.3) - 0.15;
-                
                 particlesArray.push(new Particle(x, y, directionX, directionY, size, currentColors.particle));
             }
         };
@@ -108,20 +100,16 @@ const NetworkBackground = memo(() => {
             for (let a = 0; a < particlesArray.length; a++) {
                 for (let b = a; b < particlesArray.length; b++) {
                     let distance = ((particlesArray[a].x - particlesArray[b].x) ** 2) + ((particlesArray[a].y - particlesArray[b].y) ** 2);
-
                     if (distance < connectDistance) {
                         opacityValue = 1 - (distance / 20000);
                         const rgbLine = currentColors.line.match(/\d+/g);
                         if (rgbLine && rgbLine.length >= 3) {
                            ctx.strokeStyle = `rgba(${rgbLine[0]}, ${rgbLine[1]}, ${rgbLine[2]}, ${opacityValue})`;
                         } else {
-                           ctx.strokeStyle = `rgba(100, 116, 139, ${opacityValue})`; // Fallback
+                           ctx.strokeStyle = `rgba(100, 116, 139, ${opacityValue})`;
                         }
                         ctx.lineWidth = 0.5;
-                        ctx.beginPath();
-                        ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
-                        ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
-                        ctx.stroke();
+                        ctx.beginPath(); ctx.moveTo(particlesArray[a].x, particlesArray[a].y); ctx.lineTo(particlesArray[b].x, particlesArray[b].y); ctx.stroke();
                     }
                 }
             }
@@ -131,33 +119,22 @@ const NetworkBackground = memo(() => {
             animationFrameId = requestAnimationFrame(animate);
             ctx.fillStyle = currentColors.background;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            for (let i = 0; i < particlesArray.length; i++) {
-                particlesArray[i].update();
-            }
+            particlesArray.forEach(p => p.update());
             connect();
         };
         
         const debounce = (func, delay) => {
             let timeout;
-            return function(...args) {
-                const context = this;
-                clearTimeout(timeout);
-                timeout = setTimeout(() => func.apply(context, args), delay);
-            };
+            return (...args) => { clearTimeout(timeout); timeout = setTimeout(() => func.apply(this, args), delay); };
         };
 
         const debouncedResize = debounce(resizeCanvas, 250);
-
         resizeCanvas();
         window.addEventListener('resize', debouncedResize);
         animate();
 
-        return () => {
-            cancelAnimationFrame(animationFrameId);
-            window.removeEventListener('resize', debouncedResize);
-        };
-    }, [theme]); // Rerun effect when theme changes
+        return () => { cancelAnimationFrame(animationFrameId); window.removeEventListener('resize', debouncedResize); };
+    }, [theme]);
 
     return <canvas ref={canvasRef} className="fixed top-0 left-0 w-full h-full z-0" />;
 });
@@ -169,60 +146,30 @@ const FancyCursor = memo(() => {
   const [isTouch, setIsTouch] = useState(false);
   
   useEffect(() => {
-    const handleTouch = () => {
-      setIsTouch(true);
-      window.removeEventListener('mousemove', handleMouseMove);
-    };
-    
+    const handleTouch = () => { setIsTouch(true); window.removeEventListener('mousemove', handleMouseMove); };
     const handleMouseMove = (e) => {
       const cursor = cursorRef.current;
       if (!cursor) return;
-
-      // Use requestAnimationFrame for smoother cursor updates
-      requestAnimationFrame(() => {
-        cursor.style.left = `${e.clientX}px`;
-        cursor.style.top = `${e.clientY}px`;
-      });
-      
+      requestAnimationFrame(() => { cursor.style.left = `${e.clientX}px`; cursor.style.top = `${e.clientY}px`; });
       const el = document.elementFromPoint(e.clientX, e.clientY);
-      
-      if (el) {
-        if (el.closest('#custom-resize-handle')) {
-            cursor.classList.add('resize-hover');
-            cursor.classList.remove('link-hover', 'text-hover');
-        } else if (el.closest('input[type="text"], input[type="email"], textarea')) {
-          cursor.classList.add('text-hover');
-          cursor.classList.remove('link-hover', 'resize-hover');
-        } else if (el.closest('a, button')) {
-          cursor.classList.add('link-hover');
-          cursor.classList.remove('text-hover', 'resize-hover');
-        } else {
-          cursor.classList.remove('link-hover', 'text-hover', 'resize-hover');
-        }
-      } else {
-        cursor.classList.remove('link-hover', 'text-hover', 'resize-hover');
-      }
+      const classList = cursor.classList;
+      const isResize = el?.closest('#custom-resize-handle');
+      const isText = el?.closest('input[type="text"], input[type="email"], textarea');
+      const isLink = el?.closest('a, button');
+      classList.toggle('resize-hover', isResize);
+      classList.toggle('text-hover', isText && !isResize);
+      classList.toggle('link-hover', isLink && !isText && !isResize);
     };
     
     window.addEventListener('touchstart', handleTouch, { once: true, passive: true });
-    
-    if (!isTouch) {
-        window.addEventListener('mousemove', handleMouseMove, { passive: true });
-    }
-
-    return () => {
-      window.removeEventListener('touchstart', handleTouch);
-      window.removeEventListener('mousemove', handleMouseMove);
-    };
+    if (!isTouch) window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    return () => { window.removeEventListener('touchstart', handleTouch); window.removeEventListener('mousemove', handleMouseMove); };
   }, [isTouch]);
 
   if (isTouch) return null;
 
   return (
-      <div
-        ref={cursorRef}
-        id="fancy-cursor"
-      >
+      <div ref={cursorRef} id="fancy-cursor">
         <div className="fancy-cursor-dot" />
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M5 19L19 5M5 19L9 19M5 19L5 15M19 5L15 5M19 5L19 9" stroke="#4ade80" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -234,17 +181,9 @@ const FancyCursor = memo(() => {
 // --- Theme Toggle Button ---
 const ThemeToggleButton = () => {
   const { theme, setTheme } = useContext(ThemeContext);
-
-  const toggleTheme = () => {
-    setTheme(theme === 'light' ? 'dark' : 'light');
-  };
-
+  const toggleTheme = () => setTheme(theme === 'light' ? 'dark' : 'light');
   return (
-    <button
-      onClick={toggleTheme}
-      className="p-2 rounded-full text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
-      aria-label="Toggle theme"
-    >
+    <button onClick={toggleTheme} className="p-2 rounded-full text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors" aria-label="Toggle theme">
       <Sun className="h-5 w-5 hidden dark:block" />
       <Moon className="h-5 w-5 block dark:hidden" />
     </button>
@@ -255,17 +194,12 @@ const ThemeToggleButton = () => {
 // --- Main App Component ---
 export default function App() {
   const [impressumVisible, setImpressumVisible] = useState(false);
-  
   const openImpressum = useCallback(() => setImpressumVisible(true), []);
   const closeImpressum = useCallback(() => setImpressumVisible(false), []);
 
   useEffect(() => {
-    // On initial page load, if there's no hash in the URL,
-    // smoothly scroll to the top "home" section to ensure the view is correctly positioned.
-    if (window.location.hash === '') {
-      document.getElementById('home')?.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, []); // The empty dependency array ensures this effect runs only once after the initial render.
+    if (window.location.hash === '') document.getElementById('home')?.scrollIntoView({ behavior: 'smooth' });
+  }, []);
 
   return (
     <ThemeProvider>
@@ -274,7 +208,7 @@ export default function App() {
             <NetworkBackground />
             <div className="relative z-10">
                 <Header />
-                <main className="container mx-auto px-6 py-12 md:py-20">
+                <main className="container mx-auto px-6">
                     <HeroSection />
                     <AboutSection />
                     <ServicesSection />
@@ -310,8 +244,8 @@ const Header = memo(() => (
 
 // --- Hero Section Component ---
 const HeroSection = memo(() => (
-  <section id="home" className="py-12 md:py-24 scroll-mt-20">
-    <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200 dark:border-green-900/30 rounded-lg shadow-2xl shadow-slate-300/20 dark:shadow-green-900/10 p-8 max-w-3xl mx-auto">
+  <Section id="home" className="py-12 md:py-24">
+    <SectionCard className="max-w-3xl">
       <h2 className="text-xl md:text-2xl text-green-600 dark:text-green-300 font-mono mb-2 text-center">Melvin Ragusa | Inhaber & IT-Consultant</h2>
       <h1 className="text-4xl md:text-7xl font-extrabold text-slate-900 dark:text-slate-100 mb-4 leading-tight text-center" style={{textShadow: '0 0 15px rgba(74, 222, 128, 0.4), 0 0 5px rgba(255, 255, 255, 0.3)'}}>
         Webentwicklung • IT-Beratung • Automatisierung
@@ -320,25 +254,22 @@ const HeroSection = memo(() => (
         Ich entwickle leistungsstarke Websites, biete fachkundige IT-Beratung und erstelle wirkungsvolle Automatisierungen, um Ihre Geschäftsprozesse zu optimieren.
       </p>
       <div className="text-center">
-        <a
-          href="#portfolio"
-          className="bg-green-500 hover:bg-green-600 text-slate-900 font-bold py-3 px-8 rounded-full text-lg transition-transform transform hover:scale-105 duration-300 inline-block shadow-lg shadow-green-500/20 cursor-none"
-        >
+        <a href="#portfolio" className="bg-green-500 hover:bg-green-600 text-slate-900 font-bold py-3 px-8 rounded-full text-lg transition-transform transform hover:scale-105 duration-300 inline-block shadow-lg shadow-green-500/20 cursor-none">
           Meine Arbeiten
         </a>
       </div>
-    </div>
-  </section>
+    </SectionCard>
+  </Section>
 ));
 
 // --- About Section ---
 const AboutSection = memo(() => (
-  <section id="about" className="py-20 scroll-mt-20">
-    <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200 dark:border-green-900/30 rounded-lg shadow-2xl shadow-slate-300/20 dark:shadow-green-900/10 p-8 max-w-5xl mx-auto">
+  <Section id="about">
+    <SectionCard className="max-w-5xl">
       <div className="flex flex-col md:flex-row items-center gap-12">
         <div className="md:w-1/3 text-center md:text-left">
           <div className="w-48 h-48 mx-auto md:mx-0 rounded-full bg-slate-200 dark:bg-slate-800 border-2 border-green-500 p-2 mb-4">
-            <img src="/images/profile-picture.png" alt="Melvin Ragusa" className="rounded-full w-full h-full object-cover" loading="lazy" />
+            <img src={profilePicture} alt="Melvin Ragusa" className="rounded-full w-full h-full object-cover" loading="lazy" />
           </div>
           <h3 className="text-2xl font-bold text-slate-900 dark:text-white">Melvin Ragusa</h3>
           <p className="text-green-600 dark:text-green-400 font-mono">IT-Consultant</p>
@@ -353,8 +284,8 @@ const AboutSection = memo(() => (
           </p>
         </div>
       </div>
-    </div>
-  </section>
+    </SectionCard>
+  </Section>
 ));
 
 // --- Services Section ---
@@ -365,61 +296,39 @@ const servicesData = [
 ];
 
 const ServicesSection = memo(() => (
-    <section id="services" className="py-20 scroll-mt-20">
+    <Section id="services">
         <h2 className="text-3xl md:text-4xl font-bold text-center text-slate-900 dark:text-white mb-12">Meine Leistungen</h2>
         <div className="grid md:grid-cols-3 gap-8">
             {servicesData.map((service) => {
                 const Icon = service.icon;
                 return (
-                    <div key={service.title} className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200 dark:border-green-900/30 p-8 rounded-lg shadow-lg hover:shadow-green-500/10 hover:-translate-y-2 transition-all duration-300 flex flex-col items-center text-center">
+                    <SectionCard key={service.title} className="max-w-5xl !p-8 flex flex-col items-center text-center hover:shadow-green-500/10 hover:-translate-y-2 transition-all duration-300">
                         <Icon size={40} className="text-green-500 dark:text-green-400 mb-4" />
                         <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-3">{service.title}</h3>
                         <p className="text-slate-600 dark:text-slate-400">{service.description}</p>
-                    </div>
+                    </SectionCard>
                 );
             })}
         </div>
-    </section>
+    </Section>
 ));
 
 // --- Portfolio Section ---
 const projectsData = [
-    {
-        title: "Kistenblende Onlineshop",
-        description: "Entwicklung eines Shopify-Stores mit Fokus auf klares Design, Produkt-Individualisierung und eine optimale User Experience.",
-        imgSrc: "/images/Kistenblende.png",
-        tags: ["Shopify", "Webentwicklung"],
-        link: "https://www.kistenblende.de/" 
-    },
-    {
-        title: "Digitale Präsenz für ein Kreativstudio",
-        description: "Entwicklung der Website für ein multidisziplinäres Kreativstudio, um die Kernbereiche Sound, Visuals, Web3 und Marketing überzeugend darzustellen.",
-        imgSrc: "/images/Studio31.png",
-        tags: ["React", "Webentwicklung"],
-        link: "https://studio31.xyz/"
-    },
-    {
-        title: "Smart Automation für personalisierte Produkte",
-        description: "Für Kistenblende habe ich eine automatisierte Lösung integriert, die personalisierte Vorschaubilder direkt aus dem Customizer generiert, in Mails und Bestellungen einbindet und die Produktionsdaten im Backend bereitstellt.",
-        imgSrc: "/images/Automation.png",
-        tags: ["Automatisierung", "API"]
-    }
+    { title: "Kistenblende Onlineshop", description: "Entwicklung eines Shopify-Stores mit Fokus auf klares Design, Produkt-Individualisierung und eine optimale User Experience.", imgSrc: kistenblendeImg, tags: ["Shopify", "Webentwicklung"], link: "https://www.kistenblende.de/" },
+    { title: "Digitale Präsenz für ein Kreativstudio", description: "Entwicklung der Website für ein multidisziplinäres Kreativstudio, um die Kernbereiche Sound, Visuals, Web3 und Marketing überzeugend darzustellen.", imgSrc: studio31Img, tags: ["React", "Webentwicklung"], link: "https://studio31.xyz/" },
+    { title: "Smart Automation für personalisierte Produkte", description: "Für Kistenblende habe ich eine automatisierte Lösung integriert, die personalisierte Vorschaubilder direkt aus dem Customizer generiert, in Mails und Bestellungen einbindet und die Produktionsdaten im Backend bereitstellt.", imgSrc: automationImg, tags: ["Automatisierung", "API"] }
 ];
 
 const PortfolioSection = memo(() => (
-    <section id="portfolio" className="py-20 scroll-mt-20">
+    <Section id="portfolio">
         <h2 className="text-3xl md:text-4xl font-bold text-center text-slate-900 dark:text-white mb-12">Meine Arbeiten</h2>
         <div className="grid md:grid-cols-3 gap-8">
             {projectsData.map(p => (
                 <div key={p.title} className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200 dark:border-green-900/30 rounded-lg overflow-hidden group shadow-lg hover:shadow-green-500/10 hover:-translate-y-2 transition-all duration-300">
                     <div className="overflow-hidden">
                         <a href={p.link} target="_blank" rel="noopener noreferrer" aria-label={`Link zu ${p.title}`} className="cursor-none">
-                            <img 
-                                src={p.imgSrc} 
-                                alt={p.title} 
-                                className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300 cursor-none"
-                                loading="lazy"
-                            />
+                            <img src={p.imgSrc} alt={p.title} className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300 cursor-none" loading="lazy" />
                         </a>
                     </div>
                     <div className="p-6">
@@ -432,7 +341,7 @@ const PortfolioSection = memo(() => (
                 </div>
             ))}
         </div>
-    </section>
+    </Section>
 ));
 
 // --- Testimonials Section ---
@@ -442,22 +351,23 @@ const testimonialsData = [
 ];
 
 const TestimonialsSection = memo(() => (
-    <section id="testimonials" className="py-20 scroll-mt-20">
+    <Section id="testimonials">
         <h2 className="text-3xl md:text-4xl font-bold text-center text-slate-900 dark:text-white mb-12">Was meine Kunden sagen</h2>
         <div className="max-w-3xl mx-auto grid md:grid-cols-2 gap-8">
             {testimonialsData.map(t => (
-                 <div key={t.name} className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200 dark:border-green-900/30 p-6 rounded-lg shadow-lg hover:shadow-green-500/10 hover:-translate-y-2 transition-all duration-300">
+                 <SectionCard key={t.name} className="max-w-3xl !p-6 hover:shadow-green-500/10 hover:-translate-y-2 transition-all duration-300">
                     <p className="text-slate-600 dark:text-slate-300 italic">"{t.quote}"</p>
                     <p className="text-right mt-4 font-bold text-green-600 dark:text-green-400">- {t.name}, <span className="text-slate-500 dark:text-slate-500 font-normal">{t.company}</span></p>
-                </div>
+                </SectionCard>
             ))}
         </div>
-    </section>
+    </Section>
 ));
 
 // --- Contact Section Component ---
 const ContactSection = memo(() => {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [errors, setErrors] = useState({});
   const [formStatus, setFormStatus] = useState({ submitting: false, success: false, error: '' });
   const textareaRef = useRef(null);
   const isResizing = useRef(false);
@@ -466,54 +376,40 @@ const ContactSection = memo(() => {
 
   const handleInputChange = useCallback((e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  }, []);
-
-  const handleResizeMouseMove = useCallback((e) => {
-    if (isResizing.current) {
-      const newHeight = startHeight.current + e.clientY - startY.current;
-      textareaRef.current.style.height = `${Math.max(120, newHeight)}px`;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    if (errors[name]) {
+        setErrors(prev => ({...prev, [name]: null}));
     }
-  }, []);
+  }, [errors]);
 
-  const handleResizeMouseUp = useCallback(() => {
-    isResizing.current = false;
-    window.removeEventListener('mousemove', handleResizeMouseMove);
-    window.removeEventListener('mouseup', handleResizeMouseUp);
-  }, [handleResizeMouseMove]);
-
-  const handleResizeMouseDown = useCallback((e) => {
-    isResizing.current = true;
-    startY.current = e.clientY;
-    startHeight.current = textareaRef.current.clientHeight;
-    window.addEventListener('mousemove', handleResizeMouseMove);
-    window.addEventListener('mouseup', handleResizeMouseUp);
-  }, [handleResizeMouseMove, handleResizeMouseUp]);
-
-  const encode = (data) => {
-    return Object.keys(data)
-      .map((key) => encodeURIComponent(key) + '=' + encodeURIComponent(data[key]))
-      .join('&');
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.name.trim()) newErrors.name = "Name ist erforderlich.";
+    if (!formData.email.trim()) {
+        newErrors.email = "E-Mail ist erforderlich.";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+        newErrors.email = "Bitte geben Sie eine gültige E-Mail-Adresse ein.";
+    }
+    if (!formData.message.trim()) newErrors.message = "Nachricht ist erforderlich.";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
+
+  const handleResizeMouseMove = useCallback((e) => { if (isResizing.current) { const newHeight = startHeight.current + e.clientY - startY.current; textareaRef.current.style.height = `${Math.max(120, newHeight)}px`; } }, []);
+  const handleResizeMouseUp = useCallback(() => { isResizing.current = false; window.removeEventListener('mousemove', handleResizeMouseMove); window.removeEventListener('mouseup', handleResizeMouseUp); }, [handleResizeMouseMove]);
+  const handleResizeMouseDown = useCallback((e) => { isResizing.current = true; startY.current = e.clientY; startHeight.current = textareaRef.current.clientHeight; window.addEventListener('mousemove', handleResizeMouseMove); window.addEventListener('mouseup', handleResizeMouseUp); }, [handleResizeMouseMove, handleResizeMouseUp]);
+
+  const encode = (data) => Object.keys(data).map((key) => encodeURIComponent(key) + '=' + encodeURIComponent(data[key])).join('&');
 
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
+    if (!validateForm()) return;
+    
     setFormStatus({ submitting: true, success: false, error: '' });
 
     try {
-      const response = await fetch('/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: encode({ 'form-name': 'contact', ...formData }),
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Server error: ${response.statusText}`);
-      }
-
+      const response = await fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: encode({ 'form-name': 'contact', ...formData }) });
+      if (!response.ok) throw new Error(`Server error: ${response.statusText}`);
       setFormStatus({ submitting: false, success: true, error: '' });
       setFormData({ name: '', email: '', message: '' });
     } catch (error) {
@@ -523,60 +419,50 @@ const ContactSection = memo(() => {
   }, [formData]);
 
   return (
-    <section id="contact" className="py-20 scroll-mt-20">
-      <div className="max-w-3xl mx-auto">
+    <Section id="contact">
+      <SectionCard className="max-w-3xl">
         <h2 className="text-3xl md:text-4xl font-bold text-center text-slate-900 dark:text-white mb-8">Kontakt</h2>
-        <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200 dark:border-green-900/30 p-8 rounded-lg shadow-2xl shadow-slate-300/20 dark:shadow-green-900/10">
-          {formStatus.success ? (
-            <div className="text-center p-8 bg-green-100 dark:bg-green-900/50 rounded-lg">
-              <h3 className="text-2xl font-bold text-green-800 dark:text-green-300">Vielen Dank!</h3>
-              <p className="text-green-700 dark:text-green-200 mt-2">Ihre Nachricht wurde erfolgreich gesendet. Ich werde mich in Kürze bei Ihnen melden.</p>
+        {formStatus.success ? (
+          <div className="text-center p-8 bg-green-100 dark:bg-green-900/50 rounded-lg">
+            <h3 className="text-2xl font-bold text-green-800 dark:text-green-300">Vielen Dank!</h3>
+            <p className="text-green-700 dark:text-green-200 mt-2">Ihre Nachricht wurde erfolgreich gesendet. Ich werde mich in Kürze bei Ihnen melden.</p>
+          </div>
+        ) : (
+          <form name="contact" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" onSubmit={handleSubmit} noValidate>
+            <input type="hidden" name="form-name" value="contact" />
+            <p className="hidden"><label>Don't fill this out if you're human: <input name="bot-field" /></label></p>
+            
+            <div className="grid md:grid-cols-2 gap-6 mb-4">
+              <div>
+                <label htmlFor="name" className="block text-slate-500 dark:text-slate-400 mb-2 font-mono text-sm">Name</label>
+                <input type="text" id="name" name="name" value={formData.name} onChange={handleInputChange} className={`w-full bg-slate-100 dark:bg-slate-900 border ${errors.name ? 'border-red-500' : 'border-slate-300 dark:border-slate-700'} rounded-md py-2 px-4 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500`} required autoComplete="name" />
+                {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
+              </div>
+              <div>
+                <label htmlFor="email" className="block text-slate-500 dark:text-slate-400 mb-2 font-mono text-sm">Email</label>
+                <input type="email" id="email" name="email" value={formData.email} onChange={handleInputChange} className={`w-full bg-slate-100 dark:bg-slate-900 border ${errors.email ? 'border-red-500' : 'border-slate-300 dark:border-slate-700'} rounded-md py-2 px-4 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500`} required autoComplete="email" />
+                {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+              </div>
             </div>
-          ) : (
-            <form name="contact" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" onSubmit={handleSubmit}>
-              <input type="hidden" name="form-name" value="contact" />
-              <p className="hidden">
-                <label>
-                  Don't fill this out if you're human: <input name="bot-field" />
-                </label>
-              </p>
-              <div className="grid md:grid-cols-2 gap-6 mb-6">
-                <div>
-                  <label htmlFor="name" className="block text-slate-500 dark:text-slate-400 mb-2 font-mono text-sm">Name</label>
-                  <input type="text" id="name" name="name" value={formData.name} onChange={handleInputChange} className="w-full bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-md py-2 px-4 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500" required autoComplete="name" />
-                </div>
-                <div>
-                  <label htmlFor="email" className="block text-slate-500 dark:text-slate-400 mb-2 font-mono text-sm">Email</label>
-                  <input type="email" id="email" name="email" value={formData.email} onChange={handleInputChange} className="w-full bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-md py-2 px-4 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500" required autoComplete="email" />
-                </div>
-              </div>
-              <div className="mb-6 relative">
-                <label htmlFor="message" className="block text-slate-500 dark:text-slate-400 mb-2 font-mono text-sm">Nachricht</label>
-                <textarea ref={textareaRef} id="message" name="message" value={formData.message} onChange={handleInputChange} className="w-full bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-md py-2 px-4 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 resize-none" style={{height: '120px'}} required></textarea>
-                 <div 
-                    id="custom-resize-handle" 
-                    onMouseDown={handleResizeMouseDown} 
-                    className="absolute cursor-none p-1"
-                    style={{ bottom: '2px', right: '-1px' }}
-                 >
-                    <svg width="10" height="10" viewBox="0 0 10 10" className="stroke-current text-green-500/60 dark:text-green-400/60" style={{ filter: 'drop-shadow(0 0 2px #4ade80)' }}>
-                        <line x1="1" y1="9" x2="9" y2="1" strokeWidth="1.5" />
-                        <line x1="5" y1="9" x2="9" y2="5" strokeWidth="1.5" />
-                    </svg>
-                 </div>
-              </div>
-              <div className="text-center">
-                <button type="submit" disabled={formStatus.submitting} className="bg-green-500 hover:bg-green-600 text-slate-900 font-bold py-3 px-10 rounded-full text-lg transition-all duration-300 transform hover:scale-105 shadow-lg shadow-green-500/20 disabled:bg-slate-600 disabled:cursor-not-allowed flex items-center justify-center gap-2 w-full md:w-auto mx-auto cursor-none">
-                  {formStatus.submitting && <LoaderCircle className="animate-spin" size={20} />}
-                  {formStatus.submitting ? 'Wird gesendet...' : 'Nachricht senden'}
-                </button>
-              </div>
-              {formStatus.error && <p className="text-red-500 dark:text-red-400 text-center mt-4">{formStatus.error}</p>}
-            </form>
-          )}
-        </div>
-      </div>
-    </section>
+            
+            <div className="mb-4 relative">
+              <label htmlFor="message" className="block text-slate-500 dark:text-slate-400 mb-2 font-mono text-sm">Nachricht</label>
+              <textarea ref={textareaRef} id="message" name="message" value={formData.message} onChange={handleInputChange} className={`w-full bg-slate-100 dark:bg-slate-900 border ${errors.message ? 'border-red-500' : 'border-slate-300 dark:border-slate-700'} rounded-md py-2 px-4 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 resize-none`} style={{height: '120px'}} required></textarea>
+              {errors.message && <p className="text-red-500 text-xs mt-1">{errors.message}</p>}
+              <div id="custom-resize-handle" onMouseDown={handleResizeMouseDown} className="absolute cursor-none p-1" style={{ bottom: '2px', right: '-1px' }}><svg width="10" height="10" viewBox="0 0 10 10" className="stroke-current text-green-500/60 dark:text-green-400/60" style={{ filter: 'drop-shadow(0 0 2px #4ade80)' }}><line x1="1" y1="9" x2="9" y2="1" strokeWidth="1.5" /><line x1="5" y1="9" x2="9" y2="5" strokeWidth="1.5" /></svg></div>
+            </div>
+
+            <div className="text-center mt-6">
+              <button type="submit" disabled={formStatus.submitting} className="bg-green-500 hover:bg-green-600 text-slate-900 font-bold py-3 px-10 rounded-full text-lg transition-all duration-300 transform hover:scale-105 shadow-lg shadow-green-500/20 disabled:bg-slate-600 disabled:cursor-not-allowed flex items-center justify-center gap-2 w-full md:w-auto mx-auto cursor-none">
+                {formStatus.submitting && <LoaderCircle className="animate-spin" size={20} />}
+                {formStatus.submitting ? 'Wird gesendet...' : 'Nachricht senden'}
+              </button>
+            </div>
+            {formStatus.error && <p className="text-red-500 dark:text-red-400 text-center mt-4">{formStatus.error}</p>}
+          </form>
+        )}
+      </SectionCard>
+    </Section>
   );
 });
 
@@ -606,16 +492,9 @@ const ImpressumModal = memo(({ onClose }) => (
         Provinzialstraße 177 <br />
         44388 Dortmund<br />
         Deutschland</p>
-        
-        <p><strong>Inhaber:</strong><br />
-        Melvin Ragusa</p>
-
-        <p><strong>Kontakt:</strong><br />
-        Telefon: +49 172 7879117<br />
-        E-Mail: kontakt@ragusa-it.dev</p>
-        <p><strong>Verantwortlich für den Inhalt (gemäß § 55 Abs. 2 RStV):</strong><br />
-        Melvin Ragusa<br />
-        (Anschrift wie oben)</p>
+        <p><strong>Inhaber:</strong><br />Melvin Ragusa</p>
+        <p><strong>Kontakt:</strong><br />Telefon: +49 172 7879117<br />E-Mail: kontakt@ragusa-it.dev</p>
+        <p><strong>Verantwortlich für den Inhalt (gemäß § 55 Abs. 2 RStV):</strong><br />Melvin Ragusa<br />(Anschrift wie oben)</p>
       </div>
     </div>
   </div>

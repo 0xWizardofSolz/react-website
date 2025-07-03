@@ -6,8 +6,18 @@ html {
   scroll-behavior: smooth;
 }
 
-body, a, button, input, textarea, label {
-  cursor: none;
+/* Fügen Sie einen sanften Übergang für Farb- und Hintergrundänderungen zwischen den Themes hinzu */
+*,
+*::before,
+*::after {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Verbessern Sie die Barrierefreiheit, indem Sie den Cursor nur ausblenden, wenn der Benutzer keine reduzierten Bewegungen bevorzugt. */
+@media (prefers-reduced-motion: no-preference) {
+  body, a, button, input, textarea, label {
+    cursor: none;
+  }
 }
 
 #fancy-cursor {
@@ -19,6 +29,8 @@ body, a, button, input, textarea, label {
   pointer-events: none;
   z-index: 100;
   transform: translate(-20px, -20px);
+  /* Verhindern, dass der Cursor einen Übergang auf seine Position hat, um Verzögerungen zu vermeiden */
+  transition: none;
 }
 
 .fancy-cursor-dot {
@@ -32,6 +44,7 @@ body, a, button, input, textarea, label {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  /* Behalten Sie die ursprünglichen Cursor-Übergänge bei */
   transition: width 0.2s ease, height 0.2s ease, border-radius 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
   opacity: 1;
 }
@@ -46,6 +59,7 @@ body, a, button, input, textarea, label {
   filter: drop-shadow(0 0 8px rgba(74, 222, 128, 0.9)) drop-shadow(0 0 16px rgba(74, 222, 128, 0.7));
   mix-blend-mode: lighten;
   opacity: 0;
+  /* Behalten Sie die ursprünglichen Cursor-Übergänge bei */
   transition: opacity 0.2s ease, filter 0.2s ease;
 }
 
