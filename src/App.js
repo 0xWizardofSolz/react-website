@@ -320,6 +320,14 @@ export default function App() {
   const openImpressum = useCallback(() => setImpressumVisible(true), []);
   const closeImpressum = useCallback(() => setImpressumVisible(false), []);
 
+  useEffect(() => {
+    // On initial page load, if there's no hash in the URL,
+    // smoothly scroll to the top "home" section to ensure the view is correctly positioned.
+    if (window.location.hash === '') {
+      document.getElementById('home')?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, []); // The empty dependency array ensures this effect runs only once after the initial render.
+
   return (
     <ThemeProvider>
         <div className="text-slate-700 dark:text-slate-300 font-sans leading-relaxed tracking-wide bg-slate-50 dark:bg-slate-950">
