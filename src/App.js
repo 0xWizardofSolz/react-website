@@ -461,14 +461,6 @@ const ContactSection = memo(() => {
     }));
   }, []);
 
-  const handleResizeMouseDown = useCallback((e) => {
-    isResizing.current = true;
-    startY.current = e.clientY;
-    startHeight.current = textareaRef.current.clientHeight;
-    window.addEventListener('mousemove', handleResizeMouseMove);
-    window.addEventListener('mouseup', handleResizeMouseUp);
-  }, []);
-
   const handleResizeMouseMove = useCallback((e) => {
     if (isResizing.current) {
       const newHeight = startHeight.current + e.clientY - startY.current;
@@ -481,6 +473,14 @@ const ContactSection = memo(() => {
     window.removeEventListener('mousemove', handleResizeMouseMove);
     window.removeEventListener('mouseup', handleResizeMouseUp);
   }, [handleResizeMouseMove]);
+
+  const handleResizeMouseDown = useCallback((e) => {
+    isResizing.current = true;
+    startY.current = e.clientY;
+    startHeight.current = textareaRef.current.clientHeight;
+    window.addEventListener('mousemove', handleResizeMouseMove);
+    window.addEventListener('mouseup', handleResizeMouseUp);
+  }, [handleResizeMouseMove, handleResizeMouseUp]);
 
   const encode = (data) => {
     return Object.keys(data)
@@ -609,4 +609,3 @@ const ImpressumModal = memo(({ onClose }) => (
     </div>
   </div>
 ));
-
