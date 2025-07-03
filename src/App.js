@@ -215,15 +215,16 @@ const FancyCursor = memo(() => {
           width: 24px;
           height: 24px;
           transform: translate(-50%, -50%) rotate(-45deg);
-          filter: drop-shadow(0 0 3px #4ade80);
+          filter: drop-shadow(0 0 8px rgba(74, 222, 128, 0.9)) drop-shadow(0 0 16px rgba(74, 222, 128, 0.7));
+          mix-blend-mode: lighten;
           opacity: 0;
-          transition: opacity 0.2s ease;
+          transition: opacity 0.2s ease, filter 0.2s ease;
         }
         
         /* States */
         #fancy-cursor.link-hover .fancy-cursor-dot {
-          width: 40px;
-          height: 40px;
+          width: 15px;
+          height: 15px;
           background-color: rgba(74, 222, 128, 0.5);
           box-shadow: 0 0 32px 12px rgba(74,222,128,0.7), 0 0 10px 4px rgba(255,255,255,0.5);
         }
@@ -546,7 +547,7 @@ const ContactSection = memo(() => {
                     id="custom-resize-handle" 
                     onMouseDown={handleResizeMouseDown} 
                     className="absolute cursor-none p-1"
-                    style={{ bottom: '2px', right: '-2px' }}
+                    style={{ bottom: '2px', right: '-1px' }}
                  >
                     <svg width="10" height="10" viewBox="0 0 10 10" className="stroke-current text-green-400/60" style={{ filter: 'drop-shadow(0 0 2px #4ade80)' }}>
                         <line x1="1" y1="9" x2="9" y2="1" strokeWidth="1.5" />
