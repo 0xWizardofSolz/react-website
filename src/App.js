@@ -147,17 +147,20 @@ const FancyCursor = memo(() => {
       const el = document.elementFromPoint(e.clientX, e.clientY);
       
       if (el) {
-        if (el.closest('input[type="text"], input[type="email"], textarea')) {
+        if (el.closest('#custom-resize-handle')) {
+            cursor.classList.add('resize-hover');
+            cursor.classList.remove('link-hover', 'text-hover');
+        } else if (el.closest('input[type="text"], input[type="email"], textarea')) {
           cursor.classList.add('text-hover');
-          cursor.classList.remove('link-hover');
+          cursor.classList.remove('link-hover', 'resize-hover');
         } else if (el.closest('a, button')) {
           cursor.classList.add('link-hover');
-          cursor.classList.remove('text-hover');
+          cursor.classList.remove('text-hover', 'resize-hover');
         } else {
-          cursor.classList.remove('link-hover', 'text-hover');
+          cursor.classList.remove('link-hover', 'text-hover', 'resize-hover');
         }
       } else {
-        cursor.classList.remove('link-hover', 'text-hover');
+        cursor.classList.remove('link-hover', 'text-hover', 'resize-hover');
       }
     };
     
@@ -182,31 +185,69 @@ const FancyCursor = memo(() => {
           cursor: none;
         }
         #fancy-cursor {
-          --size: 8px;
-          width: var(--size);
-          height: var(--size);
-          border-radius: 50%;
-          transform: translate(-50%, -50%);
-          transition: width 0.2s ease, height 0.2s ease, border-radius 0.2s ease, box-shadow 0.2s ease;
-          box-shadow: 0 0 15px 6px rgba(74,222,128,0.4), 0 0 5px 2px rgba(255,255,255,0.3);
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 40px;
+          height: 40px;
+          pointer-events: none;
+          z-index: 100;
+          transform: translate(-20px, -20px);
         }
-        #fancy-cursor.link-hover {
-          --size: 40px;
+        .fancy-cursor-dot {
+          width: 8px;
+          height: 8px;
+          background-color: #4ade80;
+          border-radius: 50%;
+          box-shadow: 0 0 15px 6px rgba(74,222,128,0.4), 0 0 5px 2px rgba(255,255,255,0.3);
+          mix-blend-mode: lighten;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          transition: width 0.2s ease, height 0.2s ease, border-radius 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+          opacity: 1;
+        }
+        #fancy-cursor svg {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 24px;
+          height: 24px;
+          transform: translate(-50%, -50%) rotate(-45deg);
+          filter: drop-shadow(0 0 3px #4ade80);
+          opacity: 0;
+          transition: opacity 0.2s ease;
+        }
+        
+        /* States */
+        #fancy-cursor.link-hover .fancy-cursor-dot {
+          width: 40px;
+          height: 40px;
           background-color: rgba(74, 222, 128, 0.5);
           box-shadow: 0 0 32px 12px rgba(74,222,128,0.7), 0 0 10px 4px rgba(255,255,255,0.5);
         }
-        #fancy-cursor.text-hover {
+        #fancy-cursor.text-hover .fancy-cursor-dot {
           width: 2px;
           height: 24px;
           border-radius: 1px;
-          box-shadow: 0 0 10px 2px rgba(74,222,128,0.6);
+        }
+        #fancy-cursor.resize-hover .fancy-cursor-dot {
+          opacity: 0;
+        }
+        #fancy-cursor.resize-hover svg {
+          opacity: 1;
         }
       `}</style>
       <div
         ref={cursorRef}
         id="fancy-cursor"
-        className="fixed top-0 left-0 pointer-events-none z-[100] bg-green-400 mix-blend-lighten"
-      />
+      >
+        <div className="fancy-cursor-dot" />
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5 19L19 5M5 19L9 19M5 19L5 15M19 5L15 5M19 5L19 9" stroke="#4ade80" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </div>
     </>
   );
 });
@@ -407,6 +448,10 @@ const TestimonialsSection = memo(() => (
 const ContactSection = memo(() => {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [formStatus, setFormStatus] = useState({ submitting: false, success: false, error: '' });
+  const textareaRef = useRef(null);
+  const isResizing = useRef(false);
+  const startY = useRef(0);
+  const startHeight = useRef(0);
 
   const handleInputChange = useCallback((e) => {
     const { name, value } = e.target;
@@ -415,6 +460,27 @@ const ContactSection = memo(() => {
       [name]: value,
     }));
   }, []);
+
+  const handleResizeMouseDown = useCallback((e) => {
+    isResizing.current = true;
+    startY.current = e.clientY;
+    startHeight.current = textareaRef.current.clientHeight;
+    window.addEventListener('mousemove', handleResizeMouseMove);
+    window.addEventListener('mouseup', handleResizeMouseUp);
+  }, []);
+
+  const handleResizeMouseMove = useCallback((e) => {
+    if (isResizing.current) {
+      const newHeight = startHeight.current + e.clientY - startY.current;
+      textareaRef.current.style.height = `${Math.max(120, newHeight)}px`; // Mindesthöhe 120px
+    }
+  }, []);
+
+  const handleResizeMouseUp = useCallback(() => {
+    isResizing.current = false;
+    window.removeEventListener('mousemove', handleResizeMouseMove);
+    window.removeEventListener('mouseup', handleResizeMouseUp);
+  }, [handleResizeMouseMove]);
 
   const encode = (data) => {
     return Object.keys(data)
@@ -473,9 +539,20 @@ const ContactSection = memo(() => {
                   <input type="email" id="email" name="email" value={formData.email} onChange={handleInputChange} className="w-full bg-slate-900 border border-slate-700 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-green-500" required autoComplete="email" />
                 </div>
               </div>
-              <div className="mb-6">
+              <div className="mb-6 relative">
                 <label htmlFor="message" className="block text-slate-400 mb-2 font-mono text-sm">Nachricht</label>
-                <textarea id="message" name="message" rows="5" value={formData.message} onChange={handleInputChange} className="w-full bg-slate-900 border border-slate-700 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-green-500" required></textarea>
+                <textarea ref={textareaRef} id="message" name="message" value={formData.message} onChange={handleInputChange} className="w-full bg-slate-900 border border-slate-700 rounded-md py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-green-500 resize-none" style={{height: '120px'}} required></textarea>
+                 <div 
+                    id="custom-resize-handle" 
+                    onMouseDown={handleResizeMouseDown} 
+                    className="absolute cursor-none p-1"
+                    style={{ bottom: '2px', right: '-2px' }}
+                 >
+                    <svg width="10" height="10" viewBox="0 0 10 10" className="stroke-current text-green-400/60" style={{ filter: 'drop-shadow(0 0 2px #4ade80)' }}>
+                        <line x1="1" y1="9" x2="9" y2="1" strokeWidth="1.5" />
+                        <line x1="5" y1="9" x2="9" y2="5" strokeWidth="1.5" />
+                    </svg>
+                 </div>
               </div>
               <div className="text-center">
                 <button type="submit" disabled={formStatus.submitting} className="bg-green-500 hover:bg-green-600 text-slate-900 font-bold py-3 px-10 rounded-full text-lg transition-all duration-300 transform hover:scale-105 shadow-lg shadow-green-500/20 disabled:bg-slate-600 disabled:cursor-not-allowed flex items-center justify-center gap-2 w-full md:w-auto mx-auto cursor-none">
@@ -532,3 +609,4 @@ const ImpressumModal = memo(({ onClose }) => (
     </div>
   </div>
 ));
+
