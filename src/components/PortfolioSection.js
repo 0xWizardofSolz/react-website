@@ -1,9 +1,9 @@
 // src/components/PortfolioSection.js
 import React, { memo } from "react";
 import { Section } from './Reusable';
-import kistenblendeImg from "../images/Kistenblende.png";
-import studio31Img from "../images/Studio31.png";
-import automationImg from "../images/Automation.png";
+import kistenblendeImg from "../images/Kistenblende.webp";
+import studio31Img from "../images/Studio31.webp";
+import automationImg from "../images/Automation.webp";
 
 const projectsData = [
     { title: "Kistenblende Onlineshop", description: "Entwicklung eines Shopify-Stores mit Fokus auf klares Design, Produkt-Individualisierung und eine optimale User Experience.", imgSrc: kistenblendeImg, tags: ["Shopify", "Webentwicklung"], link: "https://www.kistenblende.de/" },

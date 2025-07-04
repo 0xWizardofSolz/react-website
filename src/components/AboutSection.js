@@ -1,7 +1,7 @@
 // src/components/AboutSection.js
 import React, { memo } from 'react';
 import { Section, SectionCard } from './Reusable';
-import profilePicture from '../images/profile-picture.png';
+import profilePicture from '../images/profile-picture.webp';
 
 const AboutSection = memo(() => (
     <Section id="about">
@@ -15,12 +15,12 @@ const AboutSection = memo(() => (
                     <p className="text-green-600 dark:text-green-400 font-mono">Webentwickler</p>
                 </div>
                 <div className="md:w-2/3">
-                    <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">Über mich</h2>
+                    <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">Ihr Webentwickler in Dortmund: Experte für React & Shopify</h2>
                     <p className="text-slate-600 dark:text-slate-300 mb-4">
-                        Als Webentwickler mit einem klaren Fokus auf React, Tailwind CSS und Shopify helfe ich Unternehmen, sich in der digitalen Landschaft erfolgreich zu positionieren.
+                    Mein Name ist Melvin Ragusa. Als freiberuflicher Entwickler aus Dortmund realisiere ich performante Web-Applikationen mit React und umsatzstarke Shopify Stores. Mein Ziel ist es, Ihre Marke perfekt zu präsentieren, Prozesse zu optimieren und Ihren digitalen Erfolg nachhaltig zu steigern.
                     </p>
                     <p className="text-slate-600 dark:text-slate-300">
-                        Für den E-Commerce setze ich auf die Power von Shopify. Ich konzipiere und realisiere maßgeschneiderte Online-Shops, die Ihre Marke optimal präsentieren und Ihre Verkaufsziele unterstützen – vom initialen Setup bis hin zu individuellen Theme-Anpassungen.
+                    
                     </p>
                 </div>
             </div>

@@ -1,22 +1,57 @@
-// src/components/Header.js
-import React, { memo } from 'react';
+import React, { useState, useEffect } from 'react';
 import ThemeToggleButton from './ThemeToggleButton';
 
-const Header = memo(() => (
-  <header className="bg-slate-50/80 dark:bg-slate-950/70 backdrop-blur-sm sticky top-0 z-40 border-b border-slate-200 dark:border-green-900/30">
-    <div className="container mx-auto flex items-center justify-between p-4 text-slate-900 dark:text-white">
-      <a href="#home" className="text-2xl font-bold tracking-wider cursor-none">
-        ragusa-it<span className="text-green-500 dark:text-green-400">.dev</span>
-      </a>
-      <nav className="hidden md:flex items-center space-x-6">
-        <a href="#about" className="text-slate-600 dark:text-slate-300 hover:text-green-600 dark:hover:text-green-400 transition-colors duration-300 cursor-none">Über mich</a>
-        <a href="#services" className="text-slate-600 dark:text-slate-300 hover:text-green-600 dark:hover:text-green-400 transition-colors duration-300 cursor-none">Leistungen</a>
-        <a href="#portfolio" className="text-slate-600 dark:text-slate-300 hover:text-green-600 dark:hover:text-green-400 transition-colors duration-300 cursor-none">Portfolio</a>
-        <a href="#contact" className="bg-green-500 hover:bg-green-600 text-slate-900 font-bold py-2 px-4 rounded-md text-sm transition-all duration-300 cursor-none">Kontakt</a>
-        <ThemeToggleButton />
-      </nav>
-    </div>
-  </header>
-));
+const Header = () => {
+    const [isScrolled, setIsScrolled] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (window.scrollY > 50) {
+                setIsScrolled(true);
+            } else {
+                setIsScrolled(false);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
+
+    const headerClass = isScrolled
+        ? 'sticky top-0 z-50 shadow-md bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm'
+        : 'bg-white dark:bg-gray-900';
+
+    return (
+        <header className={`transition-all duration-300 ${headerClass}`}>
+            <div className="container mx-auto flex justify-between items-center p-4 max-w-7xl">
+                {/* Logo aktualisiert, um das Bild aus /public/logo.svg zu verwenden und eine Hover-Animation hinzuzufügen */}
+                <a href="#home">
+                    <img 
+                        src="/logo.svg" 
+                        alt="Ragusa IT-Consulting Logo" 
+                        className="h-10 w-auto transition-transform duration-300 ease-in-out hover:scale-110 hover:rotate-3"
+                        onError={(e) => { 
+                            // Fallback, falls das Logo nicht geladen werden kann
+                            e.currentTarget.src = 'https://placehold.co/160x40/111827/FFFFFF?text=RagusaIT-Consulting'; 
+                            e.currentTarget.onerror = null; 
+                        }}
+                    />
+                </a>
+                <nav className="hidden md:flex items-center space-x-6">
+                    <a href="#about" className="text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium">Über Mich</a>
+                    <a href="#services" className="text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium">Leistungen</a>
+                    <a href="#portfolio" className="text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium">Portfolio</a>
+                    <a href="#testimonials" className="text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium">Referenzen</a>
+                    <a href="#contact" className="text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium">Kontakt</a>
+                </nav>
+                <div className="flex items-center">
+                    <ThemeToggleButton />
+                </div>
+            </div>
+        </header>
+    );
+};
 
 export default Header;
