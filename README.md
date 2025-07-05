@@ -42,7 +42,7 @@ Installation
 
     Clone the repository:
 
-    git clone [https://github.com/ragusa-it/react-website.git](https://github.com/ragusa-it/react-website.git)
+    git clone https://github.com/ragusa-it/react-website
 
     Navigate to the project directory:
 
