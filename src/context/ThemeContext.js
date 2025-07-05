@@ -6,7 +6,7 @@ export const ThemeContext = createContext();
 
 // Create the provider component
 export const ThemeProvider = ({ children }) => {
-  const [theme, setTheme] = useState('dark');
+  const [theme, setTheme] = useState('light');
 
   // Effect to update the class on the root HTML element
   useEffect(() => {
