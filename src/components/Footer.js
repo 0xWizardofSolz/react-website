@@ -1,15 +1,46 @@
-// src/components/Footer.js
-import React, { memo } from 'react';
+import React, { useState } from 'react';
+import ImpressumModal from './ImpressumModal';
+import { FaGithub } from 'react-icons/fa'; // Import the GitHub icon
 
-const Footer = memo(({ onImpressumClick }) => (
-  <footer className="bg-slate-100/80 dark:bg-slate-900/80 backdrop-blur-sm border-t border-slate-200 dark:border-green-900/30 relative z-10">
-    <div className="container mx-auto py-6 px-6 text-center text-slate-600 dark:text-slate-500">
-        <p>&copy; {new Date().getFullYear()} Melvin Ragusa | Ragusa IT-Consulting. Alle Rechte vorbehalten.</p>
-        <button onClick={onImpressumClick} className="mt-2 text-sm hover:text-green-600 dark:hover:text-green-400 underline transition-colors duration-300 cursor-none">
-            Impressum
-        </button>
-    </div>
-  </footer>
-));
+const Footer = () => {
+    const [isModalOpen, setModalOpen] = useState(false);
+
+    const openModal = () => setModalOpen(true);
+    const closeModal = () => setModalOpen(false);
+
+    // Replace with your GitHub profile URL
+    const githubUrl = 'https://github.com/your-username';
+
+    return (
+        <footer className="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark py-6">
+            <div className="container mx-auto px-4">
+                <div className="flex flex-col md:flex-row justify-between items-center text-center md:text-left">
+                    {/* Copyright Info */}
+                    <p className="text-sm mb-2 md:mb-0">&copy; {new Date().getFullYear()} Ragusa IT. All rights reserved.</p>
+
+                    {/* Links and Icons */}
+                    <div className="flex items-center space-x-4">
+                        {/* GitHub Link */}
+                        <a
+                            href={githubUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label="GitHub Profile"
+                            className="text-gray-500 hover:text-text-light dark:hover:text-text-dark transition-colors duration-300"
+                        >
+                            <FaGithub size={24} />
+                        </a>
+
+                        {/* Impressum Button */}
+                        <button onClick={openModal} className="text-sm text-gray-500 hover:underline">
+                            Impressum
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <ImpressumModal isOpen={isModalOpen} onClose={closeModal} />
+        </footer>
+    );
+};
 
 export default Footer;
