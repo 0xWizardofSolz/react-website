@@ -1,107 +1,74 @@
-Ragusa IT-Consulting | Portfolio Website
+Ragusa IT-Consulting - Personal Portfolio Website
 
-Dies ist das offizielle Repository für die Portfolio-Website von Melvin Ragusa, einem Webentwickler, der sich auf React, Tailwind CSS, Shopify Store Setups und Automatisierung spezialisiert hat. Die Website wurde als moderne, interaktive Single-Page-Anwendung mit React und Tailwind CSS erstellt.
+This is the official repository for the personal portfolio website of Melvin Ragusa, showcasing projects, skills, and services offered by Ragusa IT-Consulting. The website is built with React and features a modern, responsive design with a dark mode theme toggle.
 
-Live-Seite: ragusa-it.dev
-✨ Features
+Live Site: [https://ragusa-it.dev](https://ragusa-it.dev)
 
-Moderne Single-Page-Anwendung: Ein sauberes, professionelles Layout, das alle Informationen auf einer einzigen, scrollbaren Seite präsentiert.
+✨ Key Features
 
-Komponentenbasierte Architektur: Jeder Teil der Seite ist in wiederverwendbare React-Komponenten aufgeteilt, was die Wartung und Skalierbarkeit verbessert.
+    Modern & Responsive Design: Fully responsive layout that looks great on desktops, tablets, and mobile devices.
 
-Performance-Optimierung: Nutzt Code-Splitting mit React.lazy und Suspense, um die Ladezeiten zu verkürzen, indem Komponenten nur bei Bedarf geladen werden.
+    Dynamic Content Sections: Includes sections for Hero, About, Services, Portfolio, Testimonials, and Contact.
 
-Vollständig responsiv: Ein Design, das auf Desktops, Tablets und mobilen Geräten hervorragend aussieht und funktioniert.
+    Interactive Elements: Features a network animation background and an interactive cursor.
 
-Interaktiver Hintergrund: Eine dynamische Partikelanimation im Hintergrund, die auf Mausbewegungen reagiert und für ein ansprechendes visuelles Erlebnis sorgt.
+    Dark Mode: A theme toggle allows users to switch between light and dark modes, with their preference saved.
 
-Benutzerdefinierter Cursor: Ein einzigartiger, animierter Cursor, der das Benutzererlebnis verbessert und auf verschiedene Elemente (Links, Textfelder) reagiert.
+    Impressum Modal: A modal window for legal information (Impressum) as required in Germany.
 
-Theme-Umschaltung (Hell/Dunkel): Ein sanfter Übergang zwischen einem hellen und einem dunklen Farbschema, verwaltet über React Context.
+    SEO Friendly: Includes sitemap.xml and robots.txt for better search engine visibility.
 
-Netlify-gestütztes Kontaktformular: Ein funktionales Kontaktformular, das Einsendungen sicher an ein Netlify-Dashboard sendet, ohne dass ein Backend-Server erforderlich ist.
+🚀 Technologies Used
 
-Impressum-Modal: Ein rechtlich erforderliches Impressum, das in einem sauberen Modal-Fenster angezeigt wird.
+This project was built using the following technologies:
 
-🛠️ Tech-Stack
+    React: A JavaScript library for building user interfaces.
 
-Frontend: React (erstellt mit Create React App)
+    Tailwind CSS: A utility-first CSS framework for rapid UI development.
 
-Styling: Tailwind CSS
+    React Icons: A library of popular icon packs.
 
-State Management: React Context für das Theme-Management.
+    Lucide React: A library of simply beautiful open-source icons.
 
-Icons: Lucide React
+    Framer Motion: A production-ready motion library for React.
 
-Deployment & Formularverarbeitung: Netlify
+📦 Getting Started
 
-📂 Projektstruktur
+Follow these instructions to get a copy of the project up and running on your local machine for development and testing purposes.
+Prerequisites
 
-Das Projekt ist in eine logische Ordnerstruktur unterteilt, um die Organisation zu verbessern:
+You need to have Node.js and npm installed on your machine.
+Installation
 
-src/
-├── components/      # Einzelne UI-Komponenten (Header, Footer, Sections etc.)
-├── context/         # React Context Provider (z.B. ThemeContext)
-├── images/          # Statische Bild-Assets
-├── App.js           # Haupt-App-Komponente, die das Layout zusammenfügt
-├── index.css        # Globale Stile und Tailwind-Direktiven
-└── index.js         # Einstiegspunkt der Anwendung
+    Clone the repository:
 
-⚙️ Lokale Entwicklung
+    git clone [https://github.com/ragusa-it/react-website.git](https://github.com/ragusa-it/react-website.git)
 
-Um dieses Projekt auf Ihrem lokalen Rechner auszuführen, folgen Sie diesen Schritten:
+    Navigate to the project directory:
 
-Repository klonen:
+    cd react-website
 
-git clone [https://github.com/0xWizardofSolz/react-website](https://github.com/0xWizardofSolz/react-website)
-cd react-website
+    Install NPM packages:
 
-Abhängigkeiten installieren:
-Dieses Projekt verwendet npm als Paketmanager.
+    npm install --legacy-peer-deps
 
-npm install
+Running the Application
 
-Entwicklungsserver starten:
-Dies startet die Anwendung auf http://localhost:3000.
+Once the dependencies are installed, you can start the development server:
 
 npm start
 
-📦 Statische Version exportieren
+This will run the app in development mode. Open http://localhost:3000 to view it in your browser. The page will reload when you make changes.
+📜 Available Scripts
 
-Da dieses Projekt mit Create React App erstellt wurde, können Sie ganz einfach eine statische, für die Produktion optimierte Version Ihrer Website erstellen.
+In the project directory, you can run:
 
-Build-Befehl ausführen:
-Führen Sie den folgenden Befehl in Ihrem Terminal aus:
+    npm start: Runs the app in development mode.
 
-npm run build
+    npm test: Launches the test runner in interactive watch mode.
 
-Ergebnis:
-Dieser Befehl erstellt einen build-Ordner im Stammverzeichnis Ihres Projekts. Dieser Ordner enthält alle statischen Dateien (HTML, CSS, JavaScript), die für das Deployment benötigt werden.
+    npm run build: Builds the app for production to the build folder.
 
-Verwendung:
-Der Inhalt des build-Ordners kann auf jeden beliebigen statischen Hosting-Anbieter wie Netlify, Vercel oder GitHub Pages hochgeladen werden.
+    npm run eject: Removes the single dependency and copies all configuration files and transitive dependencies into your project. Note: this is a one-way operation. Once you eject, you can’t go back!
 
-🚀 Deployment
-
-Diese Seite ist für ein einfaches Deployment mit Netlify konfiguriert.
-
-Pushen Sie das Repository zu einem Git-Anbieter (GitHub, GitLab, etc.).
-
-Verbinden Sie das Repository mit Netlify.
-
-Verwenden Sie die folgenden Build-Einstellungen:
-
-    Build-Befehl: npm run build
-
-    Veröffentlichungsverzeichnis: build
-
-Stellen Sie die Seite bereit. Netlify erkennt automatisch das data-netlify="true"-Attribut im Kontaktformular und verarbeitet die Einsendungen.
-
-📞 Kontakt
-
-Melvin Ragusa
-
-E-Mail: kontakt@ragusa-it.dev
-
-Website: ragusa-it.dev
-
+This README was last updated on July 5, 2025.
