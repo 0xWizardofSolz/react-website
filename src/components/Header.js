@@ -67,15 +67,15 @@ const Header = () => {
             </div>
 
             {/* Mobile Navigation */}
-            {isMenuOpen && (
-                <nav className="md:hidden flex flex-col items-center space-y-4 py-4">
+            <div className={`transition-all duration-300 ease-in-out overflow-hidden md:hidden ${isMenuOpen ? 'max-h-screen' : 'max-h-0'}`}>
+                <nav className="flex flex-col items-center space-y-4 py-4">
                     <a href="#about" className="text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium">Über Mich</a>
                     <a href="#services" className="text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium">Leistungen</a>
                     <a href="#portfolio" className="text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium">Portfolio</a>
                     <a href="#testimonials" className="text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium">Referenzen</a>
                     <a href="#contact" className="text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium">Kontakt</a>
                 </nav>
-            )}
+            </div>
         </header>
     );
 };
