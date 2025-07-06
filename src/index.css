@@ -4,7 +4,6 @@
 
 html {
   scroll-behavior: smooth;
-  overflow-x: hidden;
 }
 
 /* Fügen Sie einen sanften Übergang für Farb- und Hintergrundänderungen zwischen den Themes hinzu */
@@ -18,6 +17,7 @@ html {
 @media (prefers-reduced-motion: no-preference) {
   body, a, button, input, textarea, label {
     cursor: none;
+    overflow-x: hidden;
   }
 }
 
