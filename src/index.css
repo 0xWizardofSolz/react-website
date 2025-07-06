@@ -4,6 +4,7 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 /* Fügen Sie einen sanften Übergang für Farb- und Hintergrundänderungen zwischen den Themes hinzu */
