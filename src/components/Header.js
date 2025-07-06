@@ -55,7 +55,11 @@ const Header = () => {
                     <ThemeToggleButton />
                     {/* Hamburger Menu Button */}
                     <div className="md:hidden ml-4">
-                        <button onClick={() => setIsMenuOpen(!isMenuOpen)}>
+                        <button
+                            onClick={() => setIsMenuOpen(!isMenuOpen)}
+                            className="p-2 rounded-full text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
+                            aria-label="Toggle menu"
+                        >
                             {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
                         </button>
                     </div>
