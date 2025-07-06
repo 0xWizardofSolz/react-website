@@ -1,7 +1,7 @@
 // src/components/ContactSection.js
 import React, { memo, useCallback, useRef, useState } from "react";
 import { LoaderCircle } from "lucide-react";
-import { Section, SectionCard } from './Reusable'; // Corrected import
+import { Section, SectionCard } from './Reusable';
 
 const ContactSection = memo(() => {
     const [formData, setFormData] = useState({ name: '', email: '', message: '' });
@@ -15,10 +15,15 @@ const ContactSection = memo(() => {
     const handleInputChange = useCallback((e) => {
         const { name, value } = e.target;
         setFormData((prevData) => ({ ...prevData, [name]: value }));
-        if (errors[name]) {
-            setErrors(prev => ({...prev, [name]: null}));
-        }
-    }, [errors]);
+        setErrors((prevErrors) => {
+            if (prevErrors[name]) {
+                const newErrors = { ...prevErrors };
+                delete newErrors[name];
+                return newErrors;
+            }
+            return prevErrors;
+        });
+    }, []);
 
     const validateForm = useCallback(() => {
         const newErrors = {};
@@ -32,12 +37,12 @@ const ContactSection = memo(() => {
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     }, [formData]);
-
+    
     const handleResizeMouseMove = useCallback((e) => { if (isResizing.current) { const newHeight = startHeight.current + e.clientY - startY.current; textareaRef.current.style.height = `${Math.max(120, newHeight)}px`; } }, []);
     const handleResizeMouseUp = useCallback(() => { isResizing.current = false; window.removeEventListener('mousemove', handleResizeMouseMove); window.removeEventListener('mouseup', handleResizeMouseUp); }, [handleResizeMouseMove]);
     const handleResizeMouseDown = useCallback((e) => { isResizing.current = true; startY.current = e.clientY; startHeight.current = textareaRef.current.clientHeight; window.addEventListener('mousemove', handleResizeMouseMove); window.addEventListener('mouseup', handleResizeMouseUp); }, [handleResizeMouseMove, handleResizeMouseUp]);
 
-    const encode = (data) => Object.keys(data).map((key) => encodeURIComponent(key) + '=' + encodeURIComponent(data[key])).join('&');
+    const encode = useCallback((data) => Object.keys(data).map((key) => encodeURIComponent(key) + '=' + encodeURIComponent(data[key])).join('&'), []);
 
     const handleSubmit = useCallback(async (e) => {
         e.preventDefault();
@@ -54,7 +59,7 @@ const ContactSection = memo(() => {
             setFormStatus({ submitting: false, success: false, error: 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.' });
             console.error('Form submission error:', error);
         }
-    }, [formData, validateForm]);
+    }, [formData, validateForm, encode]);
 
     return (
         <Section id="contact">
@@ -83,11 +88,32 @@ const ContactSection = memo(() => {
                             </div>
                         </div>
 
-                        <div className="mb-4 relative">
+                        <div className="mb-4">
                             <label htmlFor="message" className="block text-slate-500 dark:text-slate-400 mb-2 font-mono text-sm">Nachricht</label>
-                            <textarea ref={textareaRef} id="message" name="message" value={formData.message} onChange={handleInputChange} className={`w-full bg-slate-100 dark:bg-slate-900 border ${errors.message ? 'border-red-500' : 'border-slate-300 dark:border-slate-700'} rounded-md py-2 px-4 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 resize-none`} style={{height: '120px'}} required></textarea>
+                            {/* --- FIX APPLIED HERE --- */}
+                            <div className={`relative bg-slate-100 dark:bg-slate-900 border ${errors.message ? 'border-red-500' : 'border-slate-300 dark:border-slate-700'} rounded-md focus-within:ring-2 focus-within:ring-green-500`}>
+                                <textarea 
+                                    ref={textareaRef} 
+                                    id="message" 
+                                    name="message" 
+                                    value={formData.message} 
+                                    onChange={handleInputChange} 
+                                    className="w-full bg-transparent border-none rounded-md py-2 px-4 text-slate-800 dark:text-white focus:outline-none focus:ring-0 resize-none" 
+                                    style={{height: '120px'}} 
+                                    required
+                                ></textarea>
+                                <div 
+                                    id="custom-resize-handle" 
+                                    onMouseDown={handleResizeMouseDown} 
+                                    className="absolute bottom-1 right-1 cursor-none"
+                                >
+                                    <svg width="10" height="10" viewBox="0 0 10 10" className="stroke-current text-green-500/60 dark:text-green-400/60" style={{ filter: 'drop-shadow(0 0 2px #4ade80)' }}>
+                                        <line x1="1" y1="9" x2="9" y2="1" strokeWidth="1.5" />
+                                        <line x1="5" y1="9" x2="9" y2="5" strokeWidth="1.5" />
+                                    </svg>
+                                </div>
+                            </div>
                             {errors.message && <p className="text-red-500 text-xs mt-1">{errors.message}</p>}
-                            <div id="custom-resize-handle" onMouseDown={handleResizeMouseDown} className="absolute cursor-none p-1" style={{ bottom: '2px', right: '-1px' }}><svg width="10" height="10" viewBox="0 0 10 10" className="stroke-current text-green-500/60 dark:text-green-400/60" style={{ filter: 'drop-shadow(0 0 2px #4ade80)' }}><line x1="1" y1="9" x2="9" y2="1" strokeWidth="1.5" /><line x1="5" y1="9" x2="9" y2="5" strokeWidth="1.5" /></svg></div>
                         </div>
 
                         <div className="text-center mt-6">

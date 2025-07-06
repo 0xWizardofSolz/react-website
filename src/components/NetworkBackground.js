@@ -2,6 +2,10 @@
 import React, { memo, useRef, useContext, useEffect } from 'react';
 import { ThemeContext } from '../context/ThemeContext';
 
+// --- Performance Constants ---
+const MAX_PARTICLES = 150; // Set a maximum number of particles
+const CONNECT_DISTANCE_SQUARED = 130 * 130; // Set a fixed connection distance (squared for performance)
+
 // --- Network Node Background Component ---
 const NetworkBackground = memo(() => {
     const canvasRef = useRef(null);
@@ -45,7 +49,8 @@ const NetworkBackground = memo(() => {
 
         const init = () => {
             particlesArray = [];
-            let numberOfParticles = (canvas.height * canvas.width) / 12000;
+            // Optimized: Calculate particle count but cap it at MAX_PARTICLES
+            let numberOfParticles = Math.min(MAX_PARTICLES, (canvas.height * canvas.width) / 12000);
             for (let i = 0; i < numberOfParticles; i++) {
                 let size = (Math.random() * 1.2) + 0.5;
                 let x = Math.random() * canvas.width;
@@ -58,12 +63,12 @@ const NetworkBackground = memo(() => {
 
         const connect = () => {
             let opacityValue = 1;
-            const connectDistance = (Math.min(canvas.width, canvas.height) / 7) ** 2;
             for (let a = 0; a < particlesArray.length; a++) {
                 for (let b = a; b < particlesArray.length; b++) {
                     let distance = ((particlesArray[a].x - particlesArray[b].x) ** 2) + ((particlesArray[a].y - particlesArray[b].y) ** 2);
-                    if (distance < connectDistance) {
-                        opacityValue = 1 - (distance / 20000);
+                    // Optimized: Use a fixed, pre-calculated squared distance
+                    if (distance < CONNECT_DISTANCE_SQUARED) {
+                        opacityValue = 1 - (distance / (CONNECT_DISTANCE_SQUARED * 1.2)); // Adjust opacity calculation
                         const rgbLine = currentColors.line.match(/\d+/g);
                         if (rgbLine && rgbLine.length >= 3) {
                             ctx.strokeStyle = `rgba(${rgbLine[0]}, ${rgbLine[1]}, ${rgbLine[2]}, ${opacityValue})`;
