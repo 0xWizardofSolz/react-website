@@ -1,10 +1,20 @@
-// src/components/NetworkBackground.js
 import React, { memo, useRef, useContext, useEffect } from 'react';
 import { ThemeContext } from '../context/ThemeContext';
 
 // --- Performance Constants ---
-const MAX_PARTICLES = 150; // Set a maximum number of particles
-const CONNECT_DISTANCE_SQUARED = 130 * 130; // Set a fixed connection distance (squared for performance)
+const MAX_PARTICLES = 100; // Reduced for better performance
+const CONNECT_DISTANCE_SQUARED = 120 * 120; // Slightly reduced connection distance
+const PARTICLE_DENSITY = 10000; // Controls how many particles are created relative to screen size
+
+// --- Debounce Utility Function ---
+// Moved outside the component to prevent re-creation on every render
+const debounce = (func, delay) => {
+    let timeout;
+    return (...args) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), delay);
+    };
+};
 
 // --- Network Node Background Component ---
 const NetworkBackground = memo(() => {
@@ -38,45 +48,51 @@ const NetworkBackground = memo(() => {
                 this.x = x; this.y = y; this.directionX = directionX; this.directionY = directionY; this.size = size; this.color = color;
             }
             draw() {
-                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false); ctx.fillStyle = this.color; ctx.fill();
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
+                ctx.fillStyle = this.color;
+                ctx.fill();
             }
             update() {
-                if (this.x > canvas.width || this.x < 0) this.directionX = -this.directionX;
-                if (this.y > canvas.height || this.y < 0) this.directionY = -this.directionY;
-                this.x += this.directionX; this.y += this.directionY; this.draw();
+                if (this.x > canvas.width || this.x < 0) {
+                    this.directionX = -this.directionX;
+                }
+                if (this.y > canvas.height || this.y < 0) {
+                    this.directionY = -this.directionY;
+                }
+                this.x += this.directionX;
+                this.y += this.directionY;
+                this.draw();
             }
         }
 
         const init = () => {
             particlesArray = [];
-            // Optimized: Calculate particle count but cap it at MAX_PARTICLES
-            let numberOfParticles = Math.min(MAX_PARTICLES, (canvas.height * canvas.width) / 12000);
+            const numberOfParticles = Math.min(MAX_PARTICLES, (canvas.height * canvas.width) / PARTICLE_DENSITY);
             for (let i = 0; i < numberOfParticles; i++) {
-                let size = (Math.random() * 1.2) + 0.5;
-                let x = Math.random() * canvas.width;
-                let y = Math.random() * canvas.height;
-                let directionX = (Math.random() * 0.3) - 0.15;
-                let directionY = (Math.random() * 0.3) - 0.15;
+                const size = (Math.random() * 1.2) + 0.5;
+                const x = Math.random() * canvas.width;
+                const y = Math.random() * canvas.height;
+                const directionX = (Math.random() * 0.3) - 0.15;
+                const directionY = (Math.random() * 0.3) - 0.15;
                 particlesArray.push(new Particle(x, y, directionX, directionY, size, currentColors.particle));
             }
         };
 
         const connect = () => {
-            let opacityValue = 1;
+            // Optimized loop to avoid redundant checks (b starts from a + 1)
             for (let a = 0; a < particlesArray.length; a++) {
-                for (let b = a; b < particlesArray.length; b++) {
-                    let distance = ((particlesArray[a].x - particlesArray[b].x) ** 2) + ((particlesArray[a].y - particlesArray[b].y) ** 2);
-                    // Optimized: Use a fixed, pre-calculated squared distance
-                    if (distance < CONNECT_DISTANCE_SQUARED) {
-                        opacityValue = 1 - (distance / (CONNECT_DISTANCE_SQUARED * 1.2)); // Adjust opacity calculation
-                        const rgbLine = currentColors.line.match(/\d+/g);
-                        if (rgbLine && rgbLine.length >= 3) {
-                            ctx.strokeStyle = `rgba(${rgbLine[0]}, ${rgbLine[1]}, ${rgbLine[2]}, ${opacityValue})`;
-                        } else {
-                            ctx.strokeStyle = `rgba(100, 116, 139, ${opacityValue})`;
-                        }
+                for (let b = a + 1; b < particlesArray.length; b++) {
+                    const distanceSquared = ((particlesArray[a].x - particlesArray[b].x) ** 2) + ((particlesArray[a].y - particlesArray[b].y) ** 2);
+                    if (distanceSquared < CONNECT_DISTANCE_SQUARED) {
+                        const opacityValue = 1 - (distanceSquared / CONNECT_DISTANCE_SQUARED);
+                        // Simplified strokeStyle for better performance, avoiding regex matching in the animation loop
+                        ctx.strokeStyle = `rgba(100, 116, 139, ${opacityValue})`;
                         ctx.lineWidth = 0.5;
-                        ctx.beginPath(); ctx.moveTo(particlesArray[a].x, particlesArray[a].y); ctx.lineTo(particlesArray[b].x, particlesArray[b].y); ctx.stroke();
+                        ctx.beginPath();
+                        ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
+                        ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
+                        ctx.stroke();
                     }
                 }
             }
@@ -86,21 +102,31 @@ const NetworkBackground = memo(() => {
             animationFrameId = requestAnimationFrame(animate);
             ctx.fillStyle = currentColors.background;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            particlesArray.forEach(p => p.update());
+            // Use for...of loop for potentially better performance over forEach
+            for (const particle of particlesArray) {
+                particle.update();
+            }
             connect();
         };
 
-        const debounce = (func, delay) => {
-            let timeout;
-            return (...args) => { clearTimeout(timeout); timeout = setTimeout(() => func.apply(this, args), delay); };
+        // This function now properly cancels the old animation frame before starting a new one
+        const handleResize = () => {
+            cancelAnimationFrame(animationFrameId);
+            resizeCanvas();
+            animate();
         };
+        
+        const debouncedResize = debounce(handleResize, 250);
 
-        const debouncedResize = debounce(resizeCanvas, 250);
         resizeCanvas();
+        animate(); // Initial call
+        
         window.addEventListener('resize', debouncedResize);
-        animate();
 
-        return () => { cancelAnimationFrame(animationFrameId); window.removeEventListener('resize', debouncedResize); };
+        return () => {
+            cancelAnimationFrame(animationFrameId);
+            window.removeEventListener('resize', debouncedResize);
+        };
     }, [theme]);
 
     return <canvas ref={canvasRef} className="fixed top-0 left-0 w-full h-full z-0" />;
