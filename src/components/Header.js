@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import ThemeToggleButton from './ThemeToggleButton';
+import { Menu, X } from 'lucide-react';
 
 const Header = () => {
     const [isScrolled, setIsScrolled] = useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -26,19 +28,21 @@ const Header = () => {
     return (
         <header className={`transition-all duration-300 ${headerClass}`}>
             <div className="container mx-auto flex justify-between items-center p-4 max-w-7xl">
-                {/* Logo aktualisiert, um das Bild aus /public/logo.svg zu verwenden und eine Hover-Animation hinzuzufügen */}
+                {/* Logo */}
                 <a href="#home">
-                    <img 
-                        src="/logo.svg" 
-                        alt="Ragusa IT-Consulting Logo" 
+                    <img
+                        src="/logo.svg"
+                        alt="Ragusa IT-Consulting Logo"
                         className="h-10 w-auto transition-transform duration-300 ease-in-out hover:scale-110 hover:rotate-3"
-                        onError={(e) => { 
+                        onError={(e) => {
                             // Fallback, falls das Logo nicht geladen werden kann
-                            e.currentTarget.src = 'https://placehold.co/160x40/111827/FFFFFF?text=RagusaIT-Consulting'; 
-                            e.currentTarget.onerror = null; 
+                            e.currentTarget.src = 'https://placehold.co/160x40/111827/FFFFFF?text=RagusaIT-Consulting';
+                            e.currentTarget.onerror = null;
                         }}
                     />
                 </a>
+
+                {/* Desktop Navigation */}
                 <nav className="hidden md:flex items-center space-x-6">
                     <a href="#about" className="text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium">Über Mich</a>
                     <a href="#services" className="text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium">Leistungen</a>
@@ -46,10 +50,28 @@ const Header = () => {
                     <a href="#testimonials" className="text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium">Referenzen</a>
                     <a href="#contact" className="text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium">Kontakt</a>
                 </nav>
+
                 <div className="flex items-center">
                     <ThemeToggleButton />
+                    {/* Hamburger Menu Button */}
+                    <div className="md:hidden ml-4">
+                        <button onClick={() => setIsMenuOpen(!isMenuOpen)}>
+                            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                        </button>
+                    </div>
                 </div>
             </div>
+
+            {/* Mobile Navigation */}
+            {isMenuOpen && (
+                <nav className="md:hidden flex flex-col items-center space-y-4 py-4">
+                    <a href="#about" className="text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium">Über Mich</a>
+                    <a href="#services" className="text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium">Leistungen</a>
+                    <a href="#portfolio" className="text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium">Portfolio</a>
+                    <a href="#testimonials" className="text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium">Referenzen</a>
+                    <a href="#contact" className="text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium">Kontakt</a>
+                </nav>
+            )}
         </header>
     );
 };
