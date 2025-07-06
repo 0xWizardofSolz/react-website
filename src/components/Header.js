@@ -29,7 +29,7 @@ const Header = () => {
         <header className={`transition-all duration-300 ${headerClass}`}>
             <div className="container mx-auto flex justify-between items-center p-4 max-w-7xl">
                 {/* Logo */}
-                <a href="#home">
+                <a href="#home" className="overflow-hidden">
                     <img
                         src="/logo.svg"
                         alt="Ragusa IT-Consulting Logo"
