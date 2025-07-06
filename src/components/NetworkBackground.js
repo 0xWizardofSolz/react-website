@@ -30,12 +30,15 @@ const NetworkBackground = memo(() => {
         let animationFrameId;
         let particlesArray = [];
 
+        // --- COLOR FIX ---
+        // The line color is pre-formatted as an RGB string for performance.
         const colors = {
-            light: { background: 'hsl(210 40% 98%)', particle: 'hsl(210 4% 45%)', line: 'hsl(210 4% 65%)' },
-            dark: { background: 'hsl(222.2 84% 4.9%)', particle: 'hsl(215 25% 27%)', line: 'hsl(215 25% 35%)' }
+            light: { background: 'hsl(0 0% 100%)', particle: 'hsl(0 100% 50%)', line: '255, 0, 0' },
+            dark: { background: 'hsl(0 0% 0%)', particle: 'hsl(0 100% 50%)', line: '255, 0, 0' }
         };
 
         const currentColors = colors[theme] || colors.dark;
+        const lineRgb = currentColors.line; // Store the RGB part of the line color
 
         const resizeCanvas = () => {
             canvas.width = window.innerWidth;
@@ -80,14 +83,13 @@ const NetworkBackground = memo(() => {
         };
 
         const connect = () => {
-            // Optimized loop to avoid redundant checks (b starts from a + 1)
             for (let a = 0; a < particlesArray.length; a++) {
                 for (let b = a + 1; b < particlesArray.length; b++) {
                     const distanceSquared = ((particlesArray[a].x - particlesArray[b].x) ** 2) + ((particlesArray[a].y - particlesArray[b].y) ** 2);
                     if (distanceSquared < CONNECT_DISTANCE_SQUARED) {
                         const opacityValue = 1 - (distanceSquared / CONNECT_DISTANCE_SQUARED);
-                        // Simplified strokeStyle for better performance, avoiding regex matching in the animation loop
-                        ctx.strokeStyle = `rgba(100, 116, 139, ${opacityValue})`;
+                        // Restored dynamic color for lines using the performant pre-formatted RGB string.
+                        ctx.strokeStyle = `rgba(${lineRgb}, ${opacityValue})`;
                         ctx.lineWidth = 0.5;
                         ctx.beginPath();
                         ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
@@ -102,14 +104,12 @@ const NetworkBackground = memo(() => {
             animationFrameId = requestAnimationFrame(animate);
             ctx.fillStyle = currentColors.background;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            // Use for...of loop for potentially better performance over forEach
             for (const particle of particlesArray) {
                 particle.update();
             }
             connect();
         };
 
-        // This function now properly cancels the old animation frame before starting a new one
         const handleResize = () => {
             cancelAnimationFrame(animationFrameId);
             resizeCanvas();
@@ -119,7 +119,7 @@ const NetworkBackground = memo(() => {
         const debouncedResize = debounce(handleResize, 250);
 
         resizeCanvas();
-        animate(); // Initial call
+        animate();
         
         window.addEventListener('resize', debouncedResize);
 
