@@ -5,7 +5,7 @@ import { X } from 'lucide-react';
 const ImpressumModal = memo(({ onClose }) => (
   <div className="fixed inset-0 bg-black bg-opacity-80 backdrop-blur-sm z-50 flex justify-center items-center p-4" onClick={onClose}>
     <div className="bg-slate-100 dark:bg-slate-800 rounded-lg shadow-2xl max-w-2xl w-full max-h-full overflow-y-auto p-8 relative border border-slate-300 dark:border-green-700" onClick={(e) => e.stopPropagation()}>
-      <button onClick={onClose} className="absolute top-4 right-4 text-slate-600 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors cursor-none" aria-label="Impressum schließen">
+      <button onClick={onClose} className="absolute top-4 right-4 text-slate-600 dark:text-slate-500 hover:text-green-600 dark:hover:text-green-400 transition-colors cursor-none" aria-label="Impressum schließen">
         <X size={24} />
       </button>
       <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">Impressum</h3>

@@ -7,7 +7,6 @@ const CONNECT_DISTANCE_SQUARED = 120 * 120; // Slightly reduced connection dista
 const PARTICLE_DENSITY = 10000; // Controls how many particles are created relative to screen size
 
 // --- Debounce Utility Function ---
-// Moved outside the component to prevent re-creation on every render
 const debounce = (func, delay) => {
     let timeout;
     return (...args) => {
@@ -30,15 +29,14 @@ const NetworkBackground = memo(() => {
         let animationFrameId;
         let particlesArray = [];
 
-        // --- COLOR FIX ---
-        // The line color is pre-formatted as an RGB string for performance.
+        // --- COLOR THEME ---
         const colors = {
-            light: { background: 'hsl(0 0% 100%)', particle: 'hsl(0 100% 50%)', line: '255, 0, 0' },
-            dark: { background: 'hsl(0 0% 0%)', particle: 'hsl(0 100% 50%)', line: '255, 0, 0' }
+            light: { background: 'hsl(0 0% 100%)', particle: 'hsl(0, 100%, 65%)', line: '248, 113, 113' }, // White bg, Bright Red particles/lines
+            dark: { background: 'hsl(0 0% 0%)', particle: 'hsl(0, 100%, 65%)', line: '248, 113, 113' }   // Black bg, Bright Red particles/lines
         };
 
         const currentColors = colors[theme] || colors.dark;
-        const lineRgb = currentColors.line; // Store the RGB part of the line color
+        const lineRgb = currentColors.line;
 
         const resizeCanvas = () => {
             canvas.width = window.innerWidth;
@@ -88,7 +86,6 @@ const NetworkBackground = memo(() => {
                     const distanceSquared = ((particlesArray[a].x - particlesArray[b].x) ** 2) + ((particlesArray[a].y - particlesArray[b].y) ** 2);
                     if (distanceSquared < CONNECT_DISTANCE_SQUARED) {
                         const opacityValue = 1 - (distanceSquared / CONNECT_DISTANCE_SQUARED);
-                        // Restored dynamic color for lines using the performant pre-formatted RGB string.
                         ctx.strokeStyle = `rgba(${lineRgb}, ${opacityValue})`;
                         ctx.lineWidth = 0.5;
                         ctx.beginPath();
