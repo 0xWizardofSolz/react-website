@@ -1,74 +1,68 @@
-Ragusa IT-Consulting - Personal Portfolio Website
+# Ragusa IT-Consulting — Personal Portfolio Website
 
-This is the official repository for the personal portfolio website of Melvin Ragusa, showcasing projects, skills, and services offered by Ragusa IT-Consulting. The website is built with React and features a modern, responsive design with a dark mode theme toggle.
+A modern, responsive portfolio site built with React.js for Melvin Ragusa. This project showcases projects, skills, and services, featuring interactive UI elements and optimized for performance and SEO.
 
-Live Site: [https://ragusa-it.dev](https://ragusa-it.dev)
+**Live Site:** [ragusa-it.dev](https://ragusa-it.dev)
 
-✨ Key Features
+---
 
-    Modern & Responsive Design: Fully responsive layout that looks great on desktops, tablets, and mobile devices.
+## ✨ Features
 
-    Dynamic Content Sections: Includes sections for Hero, About, Services, Portfolio, Testimonials, and Contact.
+- **Modern & Responsive Design** — Looks great on desktops, tablets, and mobile devices.
+- **Dynamic Content** — Sections for Hero, About, Services, Portfolio, Testimonials, and Contact.
+- **Interactive Elements** — Network animation background & interactive cursor.
+- **Dark Mode** — Theme toggle with preference saving.
+- **Impressum Modal** — Legal info modal (required in Germany).
+- **SEO Friendly** — Includes `sitemap.xml` and `robots.txt`.
 
-    Interactive Elements: Features a network animation background and an interactive cursor.
+---
 
-    Dark Mode: A theme toggle allows users to switch between light and dark modes, with their preference saved.
+## 🚀 Technologies
 
-    Impressum Modal: A modal window for legal information (Impressum) as required in Germany.
+- **React** — UI library
+- **Tailwind CSS** — Utility-first styling
+- **React Icons** & **Lucide React** — Icon libraries
+- **Framer Motion** — Animation/motion library
 
-    SEO Friendly: Includes sitemap.xml and robots.txt for better search engine visibility.
+---
 
-🚀 Technologies Used
+## 📦 Getting Started
 
-This project was built using the following technologies:
+### Prerequisites
 
-    React: A JavaScript library for building user interfaces.
+- Node.js & npm installed
 
-    Tailwind CSS: A utility-first CSS framework for rapid UI development.
+### Installation
 
-    React Icons: A library of popular icon packs.
+```bash
+git clone https://github.com/ragusa-it/react-website
+cd react-website
+npm install --legacy-peer-deps
+```
 
-    Lucide React: A library of simply beautiful open-source icons.
+### Running Locally
 
-    Framer Motion: A production-ready motion library for React.
-
-📦 Getting Started
-
-Follow these instructions to get a copy of the project up and running on your local machine for development and testing purposes.
-Prerequisites
-
-You need to have Node.js and npm installed on your machine.
-Installation
-
-    Clone the repository:
-
-    git clone https://github.com/ragusa-it/react-website
-
-    Navigate to the project directory:
-
-    cd react-website
-
-    Install NPM packages:
-
-    npm install --legacy-peer-deps
-
-Running the Application
-
-Once the dependencies are installed, you can start the development server:
-
+```bash
 npm start
+```
 
-This will run the app in development mode. Open http://localhost:3000 to view it in your browser. The page will reload when you make changes.
-📜 Available Scripts
+Visit [http://localhost:3000](http://localhost:3000) in your browser.
 
-In the project directory, you can run:
+---
 
-    npm start: Runs the app in development mode.
+## 📜 Available Scripts
 
-    npm test: Launches the test runner in interactive watch mode.
+- `npm start` — Run in dev mode
+- `npm test` — Run tests
+- `npm run build` — Build for production
+- `npm run eject` — Eject configs (irreversible)
 
-    npm run build: Builds the app for production to the build folder.
+---
 
-    npm run eject: Removes the single dependency and copies all configuration files and transitive dependencies into your project. Note: this is a one-way operation. Once you eject, you can’t go back!
+## 🤝 Contributing & Support
 
-This README was last updated on July 5, 2025.
+Feel free to open issues or pull requests for improvements or fixes.
+
+---
+
+_Last updated: July 22, 2025_
