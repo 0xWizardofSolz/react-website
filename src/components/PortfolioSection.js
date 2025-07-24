@@ -3,12 +3,12 @@ import React, { memo } from "react";
 import { Section, SectionCard } from './Reusable';
 import kistenblendeImg from "../images/Kistenblende.webp";
 import studio31Img from "../images/Studio31.webp";
-import automationImg from "../images/Automation.webp";
+import auraImg from "../images/AURA.webp";
 
 const projectsData = [
     { title: "Kistenblende Onlineshop", description: "Entwicklung eines Shopify-Stores mit Fokus auf klares Design, Produkt-Individualisierung und eine optimale User Experience.", imgSrc: kistenblendeImg, tags: ["Shopify", "Webentwicklung"], link: "https://www.kistenblende.de/" },
     { title: "Digitale Präsenz für ein Kreativstudio", description: "Entwicklung der Website für ein Kreativstudio, um die Kernbereiche Sound, Visuals, Web3 und Marketing überzeugend darzustellen.", imgSrc: studio31Img, tags: ["React", "Webentwicklung"], link: "https://studio31.xyz/" },
-    { title: "Smart Automation für personalisierte Produkte", description: "Für Kistenblende habe ich eine automatisierte Lösung integriert, die personalisierte Vorschaubilder direkt aus dem Customizer generiert, in Mails und Bestellungen einbindet und die Produktionsdaten im Backend bereitstellt.", imgSrc: automationImg, tags: ["Automatisierung", "API"] }
+    { title: "AURA - Anwesenheits- Und Rettungs- Assistent", description: "Entwicklung eines innovativen Systems zur Anwesenheitsüberwachung und Notfallreaktion.", imgSrc: auraImg, tags: ["React", "API", "Notfallmanagement"], link: "https://aurabrandschutz.app/" } 
 ];
 
 const PortfolioSection = memo(() => (
