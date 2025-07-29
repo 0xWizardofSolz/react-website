@@ -13,15 +13,26 @@ const debounce = (func, delay) => {
     let timeout;
     return (...args) => {
         clearTimeout(timeout);
-        timeout = setTimeout(() => func.apply(this, args), delay);
+        timeout = setTimeout(() => func(...args), delay);
     };
 };
 
 // --- Visibility Observer Hook ---
 const useVisibilityObserver = (ref, callback) => {
     useEffect(() => {
+        if (!('IntersectionObserver' in window)) {
+            console.warn('IntersectionObserver not supported');
+            return;
+        }
+
         const observer = new IntersectionObserver(
-            ([entry]) => callback(entry.isIntersecting),
+            ([entry]) => {
+                try {
+                    callback(entry.isIntersecting);
+                } catch (error) {
+                    console.error('Error in visibility callback:', error);
+                }
+            },
             { threshold: 0 }
         );
         
@@ -50,8 +61,12 @@ const NetworkBackground = memo(() => {
     useEffect(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
+        
         const ctx = canvas.getContext('2d');
-        if (!ctx) return;
+        if (!ctx) {
+            console.error('Failed to get canvas context');
+            return;
+        }
 
         let animationFrameId;
         let particlesArray = [];
@@ -198,5 +213,7 @@ const NetworkBackground = memo(() => {
 
     return <canvas ref={canvasRef} className="fixed top-0 left-0 w-full h-full z-0" />;
 });
+
+NetworkBackground.displayName = 'NetworkBackground';
 
 export default NetworkBackground;

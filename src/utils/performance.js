@@ -7,7 +7,11 @@ export const measurePerformance = (name, fn) => {
     const start = performance.now();
     const result = fn(...args);
     const end = performance.now();
-    console.log(`${name} took ${end - start} milliseconds`);
+    
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`${name} took ${end - start} milliseconds`);
+    }
+    
     return result;
   };
 };
@@ -15,11 +19,9 @@ export const measurePerformance = (name, fn) => {
 // Throttle function for performance optimization
 export const throttle = (func, limit) => {
   let inThrottle;
-  return function() {
-    const args = arguments;
-    const context = this;
+  return (...args) => {
     if (!inThrottle) {
-      func.apply(context, args);
+      func(...args);
       inThrottle = true;
       setTimeout(() => inThrottle = false, limit);
     }
@@ -29,17 +31,15 @@ export const throttle = (func, limit) => {
 // Debounce function for performance optimization
 export const debounce = (func, wait, immediate) => {
   let timeout;
-  return function() {
-    const context = this;
-    const args = arguments;
-    const later = function() {
+  return (...args) => {
+    const later = () => {
       timeout = null;
-      if (!immediate) func.apply(context, args);
+      if (!immediate) func(...args);
     };
     const callNow = immediate && !timeout;
     clearTimeout(timeout);
     timeout = setTimeout(later, wait);
-    if (callNow) func.apply(context, args);
+    if (callNow) func(...args);
   };
 };
 
@@ -55,49 +55,67 @@ export const createIntersectionObserver = (callback, options = {}) => {
 
 // Performance observer for Core Web Vitals
 export const observeWebVitals = () => {
-  if ('PerformanceObserver' in window) {
-    try {
-      // Observe LCP (Largest Contentful Paint)
-      const lcpObserver = new PerformanceObserver((entryList) => {
-        const entries = entryList.getEntries();
-        const lastEntry = entries[entries.length - 1];
-        console.log('LCP:', lastEntry.startTime);
-      });
-      lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
+  if (!('PerformanceObserver' in window)) {
+    console.warn('PerformanceObserver not supported');
+    return;
+  }
 
-      // Observe FID (First Input Delay)
-      const fidObserver = new PerformanceObserver((entryList) => {
-        for (const entry of entryList.getEntries()) {
+  try {
+    // Observe LCP (Largest Contentful Paint)
+    const lcpObserver = new PerformanceObserver((entryList) => {
+      const entries = entryList.getEntries();
+      const lastEntry = entries[entries.length - 1];
+      if (lastEntry && process.env.NODE_ENV === 'development') {
+        console.log('LCP:', lastEntry.startTime);
+      }
+    });
+    lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
+
+    // Observe FID (First Input Delay)
+    const fidObserver = new PerformanceObserver((entryList) => {
+      for (const entry of entryList.getEntries()) {
+        if (process.env.NODE_ENV === 'development') {
           console.log('FID:', entry.processingStart - entry.startTime);
         }
-      });
-      fidObserver.observe({ entryTypes: ['first-input'] });
+      }
+    });
+    fidObserver.observe({ entryTypes: ['first-input'] });
 
-      // Observe CLS (Cumulative Layout Shift)
-      const clsObserver = new PerformanceObserver((entryList) => {
-        let cls = 0;
-        for (const entry of entryList.getEntries()) {
-          if (!entry.hadRecentInput) {
-            cls += entry.value;
-          }
+    // Observe CLS (Cumulative Layout Shift)
+    let clsValue = 0;
+    const clsObserver = new PerformanceObserver((entryList) => {
+      for (const entry of entryList.getEntries()) {
+        if (!entry.hadRecentInput) {
+          clsValue += entry.value;
         }
-        console.log('CLS:', cls);
-      });
-      clsObserver.observe({ entryTypes: ['layout-shift'] });
-    } catch (error) {
-      console.log('Performance Observer not supported');
-    }
+      }
+      if (process.env.NODE_ENV === 'development') {
+        console.log('CLS:', clsValue);
+      }
+    });
+    clsObserver.observe({ entryTypes: ['layout-shift'] });
+  } catch (error) {
+    console.error('Error setting up performance observers:', error);
   }
 };
 
 // Memory usage monitoring
 export const logMemoryUsage = () => {
-  if ('memory' in performance) {
+  if (!('memory' in performance)) {
+    console.warn('Memory usage monitoring not supported');
+    return;
+  }
+
+  try {
     const memory = performance.memory;
-    console.log('Memory Usage:', {
-      used: Math.round(memory.usedJSHeapSize / 1048576) + ' MB',
-      total: Math.round(memory.totalJSHeapSize / 1048576) + ' MB',
-      limit: Math.round(memory.jsHeapSizeLimit / 1048576) + ' MB'
-    });
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Memory Usage:', {
+        used: Math.round(memory.usedJSHeapSize / 1048576) + ' MB',
+        total: Math.round(memory.totalJSHeapSize / 1048576) + ' MB',
+        limit: Math.round(memory.jsHeapSizeLimit / 1048576) + ' MB'
+      });
+    }
+  } catch (error) {
+    console.error('Error accessing memory information:', error);
   }
 };

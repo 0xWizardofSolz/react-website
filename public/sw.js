@@ -10,9 +10,12 @@ const STATIC_ASSETS = [
 // Install event - cache static assets
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(STATIC_ASSETS);
-    })
+    caches.open(CACHE_NAME)
+      .then((cache) => cache.addAll(STATIC_ASSETS))
+      .catch((error) => {
+        console.error('Failed to cache assets during install:', error);
+        throw error;
+      })
   );
   self.skipWaiting();
 });
@@ -40,26 +43,38 @@ self.addEventListener('fetch', (event) => {
   if (!event.request.url.startsWith(self.location.origin)) return;
 
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-
-      return fetch(event.request).then((response) => {
-        // Don't cache if not a valid response
-        if (!response || response.status !== 200 || response.type !== 'basic') {
-          return response;
+    caches.match(event.request)
+      .then((cachedResponse) => {
+        if (cachedResponse) {
+          return cachedResponse;
         }
 
-        // Clone the response
-        const responseToCache = response.clone();
+        return fetch(event.request)
+          .then((response) => {
+            // Don't cache if not a valid response
+            if (!response || response.status !== 200 || response.type !== 'basic') {
+              return response;
+            }
 
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, responseToCache);
-        });
+            // Clone the response
+            const responseToCache = response.clone();
 
-        return response;
-      });
-    })
+            caches.open(CACHE_NAME)
+              .then((cache) => cache.put(event.request, responseToCache))
+              .catch((error) => {
+                console.error('Failed to cache response:', error);
+              });
+
+            return response;
+          })
+          .catch((error) => {
+            console.error('Fetch failed:', error);
+            throw error;
+          });
+      })
+      .catch((error) => {
+        console.error('Cache match failed:', error);
+        return fetch(event.request);
+      })
   );
 });

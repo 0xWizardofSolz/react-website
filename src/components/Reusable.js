@@ -10,6 +10,8 @@ export const Section = memo(({ children, id, className = '' }) => (
   </section>
 ));
 
+Section.displayName = 'Section';
+
 /**
  * A reusable card component with consistent styling for sections.
  * Updated to match the ImpressumModal styles.
@@ -19,3 +21,5 @@ export const SectionCard = memo(({ children, className = '' }) => (
         {children}
     </div>
 ));
+
+SectionCard.displayName = 'SectionCard';
