@@ -1,5 +1,5 @@
 // src/context/ThemeContext.js
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useMemo, useCallback } from 'react';
 
 // Create the context
 export const ThemeContext = createContext();
@@ -11,6 +11,11 @@ export const ThemeProvider = ({ children }) => {
     const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     return storedTheme || (systemPrefersDark ? 'dark' : 'light');
   });
+
+  // Memoized toggle function to prevent unnecessary re-renders
+  const toggleTheme = useCallback(() => {
+    setTheme(prevTheme => prevTheme === 'dark' ? 'light' : 'dark');
+  }, []);
 
   // Effect to update the class on the root HTML element and store the theme
   useEffect(() => {
@@ -37,8 +42,15 @@ export const ThemeProvider = ({ children }) => {
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
+  // Memoize the context value to prevent unnecessary re-renders
+  const contextValue = useMemo(() => ({
+    theme,
+    setTheme,
+    toggleTheme
+  }), [theme, toggleTheme]);
+
   return (
-    <ThemeContext.Provider value={{ theme, setTheme }}>
+    <ThemeContext.Provider value={contextValue}>
       {children}
     </ThemeContext.Provider>
   );

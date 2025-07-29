@@ -1,5 +1,5 @@
 // src/components/PortfolioSection.js
-import React, { memo } from "react";
+import React, { memo, useState, useRef, useEffect } from "react";
 import { Section, SectionCard } from './Reusable';
 import kistenblendeImg from "../images/Kistenblende.webp";
 import studio31Img from "../images/Studio31.webp";
@@ -11,6 +11,48 @@ const projectsData = [
     { title: "AURA - Anwesenheits- Und Rettungs- Assistent", description: "Entwicklung eines innovativen Systems zur Anwesenheitsüberwachung und Notfallreaktion.", imgSrc: auraImg, tags: ["React", "API", "Notfallmanagement"], link: "https://aurabrandschutz.app/" } 
 ];
 
+// Optimized LazyImage component with intersection observer
+const LazyImage = memo(({ src, alt, className, ...props }) => {
+    const [isLoaded, setIsLoaded] = useState(false);
+    const [isInView, setIsInView] = useState(false);
+    const imgRef = useRef();
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setIsInView(true);
+                    observer.disconnect();
+                }
+            },
+            { threshold: 0.1, rootMargin: '50px' }
+        );
+
+        if (imgRef.current) {
+            observer.observe(imgRef.current);
+        }
+
+        return () => observer.disconnect();
+    }, []);
+
+    return (
+        <div ref={imgRef} className={className}>
+            {isInView && (
+                <img
+                    src={src}
+                    alt={alt}
+                    onLoad={() => setIsLoaded(true)}
+                    style={{
+                        opacity: isLoaded ? 1 : 0,
+                        transition: 'opacity 0.3s ease'
+                    }}
+                    {...props}
+                />
+            )}
+        </div>
+    );
+});
+
 const PortfolioSection = memo(() => (
     <Section id="portfolio">
         <h2 className="text-3xl md:text-4xl font-bold text-center text-slate-900 dark:text-white mb-12">Meine Arbeiten</h2>
@@ -19,7 +61,11 @@ const PortfolioSection = memo(() => (
                 <SectionCard key={p.title} className="flex flex-col hover:shadow-green-500/20 hover:-translate-y-2 transition-all duration-300">
                     <div className="overflow-hidden rounded-t-lg">
                         <a href={p.link} target="_blank" rel="noopener noreferrer" aria-label={`Link zu ${p.title}`} className="cursor-none">
-                            <img src={p.imgSrc} alt={p.title} className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300 cursor-none" loading="lazy" />
+                            <LazyImage 
+                                src={p.imgSrc} 
+                                alt={p.title} 
+                                className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300 cursor-none"
+                            />
                         </a>
                     </div>
                     <div className="p-6 flex flex-col flex-grow">
