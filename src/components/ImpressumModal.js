@@ -16,7 +16,7 @@ const ImpressumModal = memo(({ onClose }) => (
         44388 Dortmund<br />
         Deutschland</p>
         <p><strong>Inhaber:</strong><br />Melvin Ragusa</p>
-        <p><strong>Kontakt:</strong><br />Telefon: +49 172 7879117<br />E-Mail: kontakt@ragusa-it.dev</p>
+        <p><strong>Kontakt:</strong><br />Telefon: +49 1529 2608773<br />E-Mail: kontakt@ragusa-it.dev</p>
         <p><strong>Verantwortlich für den Inhalt (gemäß § 55 Abs. 2 RStV):</strong><br />Melvin Ragusa<br />(Anschrift wie oben)</p>
         <p><strong>Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.</strong></p>
       </div>
